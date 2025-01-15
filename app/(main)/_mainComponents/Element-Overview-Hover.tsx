@@ -1,0 +1,46 @@
+'use client'
+
+import Image from 'next/image'
+import { useOrganization, useOrganizationList } from '@clerk/nextjs'
+
+
+import { cn } from '@/lib/utils'
+import { ElementoviewProps } from '@/components/Element-View'
+
+interface ElementoviewhoverProps {
+  id: string
+  name: string
+  imageUrl: string
+}
+
+export const Elementoviewhover = ({ id, name, imageUrl }: ElementoviewhoverProps) => {
+  const { organization } = useOrganization()
+  const { setActive } = useOrganizationList()
+
+  const isActive = organization?.id === id
+
+  const onClick = () => {
+    if (!setActive) return
+    setActive({ organization: id })
+  }
+
+  return (
+    <div
+      className={cn(
+        'aspect-square relative border-2 border-transparent rounded-[8px] opacity-75 hover:opacity-100 transition cursor-pointer',
+        isActive && 'p-[1px] opacity-100 border-white'
+      )}
+    >
+      <ElementoviewProps label={name} side="right" align="start" sideOffset={18}>
+        <Image
+          alt={name}
+          src={imageUrl}
+          onClick={onClick}
+          width={32}
+          height={32}
+          className="rounded-[5px] w-full h-full"
+        />
+      </ElementoviewProps>
+    </div>
+  )
+}
