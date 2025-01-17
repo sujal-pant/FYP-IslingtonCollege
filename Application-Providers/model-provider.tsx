@@ -1,6 +1,6 @@
 'use client'
 
-import { RenameModal } from '@/components/modals/rename-model'
+import { ModelRenameGlobal } from '@/components/modals/Model-Rename-Global'
 import { useEffect, useState } from 'react'
 
 
@@ -13,5 +13,5 @@ export const ModalProvider = () => {
 
   if (!isMounted) return null
 
-  return <RenameModal />
+  return <ModelRenameGlobal />
 }

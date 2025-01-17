@@ -20,7 +20,7 @@ import { customapi } from '@/hooks/custom-api'
 import { api } from '@/convex/_generated/api'
 import { modelrename } from '@/store/Model-Rename'
 
-export const RenameModal = () => {
+export const ModelRenameGlobal = () => {
   const { mutate, pending } = customapi(api.board.update)
 
   const { isOpen, onClose, initialValues } = modelrename()
