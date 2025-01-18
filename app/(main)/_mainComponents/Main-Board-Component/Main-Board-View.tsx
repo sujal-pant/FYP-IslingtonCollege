@@ -22,11 +22,13 @@ export const MainBoardView = ({ orgId, query }: BoardListProps) => {
   if (boardsData === undefined) {
     return (
       <div>
-        <h2 className="text-3xl">
-          {query.favorites ? 'Your Favorite Boards' : 'Current Boards'}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
+        <div className="flex items-center gap-4">
+          <h2 className="text-3xl">
+            {query.favorites ? 'Your Favorite Boards' : 'Current Boards'}
+          </h2>
           <Createnewboard orgId={orgId} disabled />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
           <BoardCard.Skeleton />
           <BoardCard.Skeleton />
           <BoardCard.Skeleton />
@@ -44,19 +46,17 @@ export const MainBoardView = ({ orgId, query }: BoardListProps) => {
   // Handle case where no favorite boards are found
   if (!boardsData?.length && query.favorites) {
     return (
-      <div>
-        <div className="h-full flex flex-col items-center justify-center">
-          <Image
-            src="/empty-favorites.svg"
-            height={140}
-            width={140}
-            alt="Empty"
-          />
-          <h2 className="text-2xl font-semibold mt-6">You Do Not Have Favorite Boards</h2>
-          <p className="text-muted-foreground text-sm mt-2">
-            Try favoriting a board
-          </p>
-        </div>
+      <div className="h-full flex flex-col items-center justify-center">
+        <Image
+          src="/empty-favorites.svg"
+          height={140}
+          width={140}
+          alt="Empty"
+        />
+        <h2 className="text-2xl font-semibold mt-6">You Do Not Have Favorite Boards</h2>
+        <p className="text-muted-foreground text-sm mt-2">
+          Try favoriting a board
+        </p>
       </div>
     );
   }
@@ -69,11 +69,13 @@ export const MainBoardView = ({ orgId, query }: BoardListProps) => {
   // Render the boards list
   return (
     <div>
-      <h2 className="text-3xl">
-        {query.favorites ? 'Your Favorite Boards' : 'Current Boards'}
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
+      <div className="flex items-center gap-4">
+        <h2 className="text-3xl">
+          {query.favorites ? 'Your Favorite Boards' : 'Current Boards'}
+        </h2>
         <Createnewboard orgId={orgId} />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
         {boardsData?.map((boarddata) => (
           <BoardCard
             key={boarddata._id}

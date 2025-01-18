@@ -39,15 +39,14 @@ export const Createnewboard = ({ orgId, disabled }: CreatenewboardProps) => {
 
   return (
     <button
-      disabled={pending || disabled} // Disabling the button if the mutation is in progress or if explicitly disabled
+      disabled={pending || disabled} // Disabling the button if mutation is in progress or explicitly disabled
       onClick={handleCreateBoard} // Handling the button click to create the board
-      className={
-        // Applying Tailwind classes for styling with smooth transition and hover effects
-        `col-span-1 aspect-[100/127] bg-gray-600 rounded-lg flex flex-col items-center justify-center gap-2 py-4 px-6 transition-all duration-300 ease-in-out transform hover:scale-105 ${pending || disabled ? 'opacity-60 cursor-not-allowed' : ''}`
-      }
+      className={`rounded-lg border border-gray-300 bg-gray-100 text-gray-700 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-gray-200 hover:text-gray-900 ${
+        pending || disabled ? 'opacity-50 cursor-not-allowed' : ''
+      }`}
     >
-      <Plus className="h-8 w-8 text-white stroke-1.5" /> {/* Plus icon */}
-      <p className="text-sm text-white font-medium">Create New Board</p> {/* Button text */}
+      <Plus className="h-5 w-5 stroke-1.5" /> {/* Plus icon */}
+      Create Board
     </button>
   )
 }
