@@ -13,7 +13,7 @@ export default function PublicPage() {
 
   return (
     <div>
-      <h1>Welcome to Share It</h1>
+      <h1>Welcome to SketchSphere</h1>
       <p>Join us to explore amazing features.</p>
       <button onClick={handleJoinClick} className="join-button">
         Join Now

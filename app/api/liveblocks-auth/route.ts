@@ -1,42 +1,57 @@
-import { auth, currentUser } from '@clerk/nextjs'
-import { Liveblocks } from '@liveblocks/node'
-import { ConvexHttpClient } from 'convex/browser'
+import { auth, currentUser } from '@clerk/nextjs';
+import { Liveblocks } from '@liveblocks/node';
+import { ConvexHttpClient } from 'convex/browser';
 
-import { api } from '@/convex/_generated/api'
+import { api } from '@/convex/_generated/api';
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
+// Initialize Convex client
+const convexClient = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-const liveblocks = new Liveblocks({
+// Initialize Liveblocks client with secret key
+const liveblocksClient = new Liveblocks({
   secret: "sk_dev_m-fp8ntnKG9HMLEgQ6Mx86a8LThYvKCX9bmsn-JTojK7FLQJbKHFz5UaUakYQD_b",
-})
+});
 
+// Handle POST request
 export async function POST(request: Request) {
-  const authorization = await auth()
-  const user = await currentUser()
-  console.log("Auth info ",{authorization,user})
+  // Retrieve authorization and user details
+  const authInfo = await auth();
+  const user = await currentUser();
 
-  if (!authorization || !user) {
-    return new Response('Unauthorized', { status: 403 })
+  // Log auth and user info for debugging
+  console.log("Authorization Details:", { authInfo, user });
+
+  // Validate authorization and user
+  if (!authInfo || !user) {
+    return new Response('Unauthorized', { status: 403 });
   }
 
-  const { room } = await request.json()
-  const board = await convex.query(api.board.get, { id: room })
+  // Parse request payload to get room details
+  const { room } = await request.json();
 
-  if (board?.orgId !== authorization.orgId) {
-    return new Response('Unauthorized', { status: 403 })
+  // Query board details from Convex
+  const boardDetails = await convexClient.query(api.board.get, { id: room });
+
+  // Check if the user belongs to the same organization as the board
+  if (boardDetails?.orgId !== authInfo.orgId) {
+    return new Response('Unauthorized', { status: 403 });
   }
 
-  const userInfo = {
-    name: user.firstName || 'Teammeate',
+  // Prepare user information for the Liveblocks session
+  const userMetadata = {
+    name: user.firstName || 'Teammate',
     picture: user.imageUrl,
-  }
+  };
 
-  const session = liveblocks.prepareSession(user.id, { userInfo })
+  // Create a new Liveblocks session for the user
+  const session = liveblocksClient.prepareSession(user.id, { userInfo: userMetadata });
 
+  // Grant full access to the specified room
   if (room) {
-    session.allow(room, session.FULL_ACCESS)
+    session.allow(room, session.FULL_ACCESS);
   }
 
-  const { status, body } = await session.authorize()
-  return new Response(body, { status })
+  // Authorize the session and return the response
+  const { status, body } = await session.authorize();
+  return new Response(body, { status });
 }
