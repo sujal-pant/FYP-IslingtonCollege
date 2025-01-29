@@ -9,7 +9,7 @@ const convexClient = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // Initialize Liveblocks client with secret key
 const liveblocksClient = new Liveblocks({
-  secret: "sk_dev_m-fp8ntnKG9HMLEgQ6Mx86a8LThYvKCX9bmsn-JTojK7FLQJbKHFz5UaUakYQD_b",
+  secret: process.env.LIVEBLOCKS_SECRET!,
 });
 
 // Handle POST request
