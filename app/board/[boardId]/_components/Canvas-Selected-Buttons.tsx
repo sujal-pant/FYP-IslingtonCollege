@@ -1,31 +1,40 @@
 'use client';
 
 import { LucideIcon } from 'lucide-react';
-
 import { ElementoviewProps } from '@/components/Element-View';
 import { Button } from '@/components/ui/button';
 
+
+/*
+The CanvasSelectedButtons component renders a button with an icon and a label, 
+where the button's style changes based on its isActive and isDisabled states.
+If the onClick function is provided,  it triggers on button click. The ElementoviewProps component 
+is used to display the label next to the button, with dynamic styling for active and disabled states
+*/
+
+// Defining the interface for the props to the CanvasSelectedButtons component
 interface SelectedButtonsProps {
-  label: string;
-  icon: LucideIcon;
-  onClick?: () => void; // Make optional if it might not be passed
+  Elementlabel: string;
+  Elementicon: LucideIcon;
+  onClick?: () => void; 
   isActive?: boolean;
   isDisabled?: boolean;
 }
 
 export const CanvasSelectedButtons = ({
-  label,
-  icon: Icon,
-  onClick, // Default to a no-op
+  Elementlabel,
+  Elementicon: Icon,
+  onClick, 
   isActive,
   isDisabled,
 }: SelectedButtonsProps) => (
-  <ElementoviewProps label={label} side="right" sideOffset={14}>
+    // Wrapping the button with the ElementoviewProps component to provide a label
+  <ElementoviewProps label={Elementlabel} side="right" sideOffset={16}>
     <Button
       disabled={isDisabled}
       onClick={onClick}
       size="icon"
-      variant={isActive ? 'boardActive' : 'board'}
+      variant={isActive ? 'ActiveBoard' : 'NotActiveBoard'}
     >
       <Icon />
     </Button>

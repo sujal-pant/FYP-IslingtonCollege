@@ -1,133 +1,90 @@
-import {
-  Circle,
-  MousePointer2,
-  Pencil,
-  Redo2,
-  Square,
-  StickyNote,
-  Type,
-  Undo2,
-} from 'lucide-react'
+import { CanvasMode, CanvasState, LayerType } from '@/types/canvas';
+import {MousePointer,PenTool,Type,StickyNote, Square, Circle,Undo,Redo,} from 'lucide-react';
+import { CanvasSelectedButtons } from './Canvas-Selected-Buttons';
 
-import { CanvasSelectedButtons } from './Canvas-Selected-Buttons'
+/*
+CanvasToolbar is the main toolbar for interacting with the canvas, providing options like selecting tools, 
+drawing, inserting shapes, and handling undo/redo actions.
+*/
 
-import { CanvasMode, CanvasState, LayerType } from '@/types/canvas'
+// Defining the props for CanvasToolbar component
+interface CanvasToolbarProps {
+  undo: () => void;
+  redo: () => void;
+  UndoAction: boolean;
+  RedoAction: boolean;
 
-interface ToolbarProps {
-  canvasState: CanvasState
-  setCanvasState: (newState: CanvasState) => void
-  undo: () => void
-  redo: () => void
-  canUndo: boolean
-  canRedo: boolean
+// The current state of the canvas (mode, layerType)
+  canvasState: CanvasState;
+  setCanvasState: (state: CanvasState) => void;// Function to update the canvas state
 }
 
-export const Toolbar = ({
+export const CanvasToolbar = ({
   canvasState,
   setCanvasState,
   undo,
   redo,
-  canUndo,
-  canRedo,
-}: ToolbarProps) => (
-  <div className="absolute top-[50%] -translate-y-[50%] left-2 flex flex-col gap-y-4">
-    <div className="bg-white rounded-md p-1.5 flex gap-y-1 flex-col items-center shadow-md">
-      <CanvasSelectedButtons
-        label="Select"
-        icon={MousePointer2}
-        onClick={() =>
-          setCanvasState({
-            mode: CanvasMode.Empty,
-          })
-        }
-        isActive={
-          canvasState.mode === CanvasMode.Empty ||
-          canvasState.mode === CanvasMode.Transforming ||
-          canvasState.mode === CanvasMode.SelectionNet ||
-          canvasState.mode === CanvasMode.Clicking ||
-          canvasState.mode === CanvasMode.Resizing
-        }
-      />
-      <CanvasSelectedButtons
-        label="Text"
-        icon={Type}
-        onClick={() =>
-          setCanvasState({
-            mode: CanvasMode.Inserting,
-            layerType: LayerType.TextBox,
-          })
-        }
-        isActive={
-          canvasState.mode === CanvasMode.Inserting &&
-          canvasState.layerType === LayerType.TextBox
-        }
-      />
-      <CanvasSelectedButtons
-        label="Sticky note"
-        icon={StickyNote}
-        onClick={() =>
-          setCanvasState({
-            mode: CanvasMode.Inserting,
-            layerType: LayerType.StickyNote,
-          })
-        }
-        isActive={
-          canvasState.mode === CanvasMode.Inserting &&
-          canvasState.layerType === LayerType.StickyNote
-        }
-      />
-      <CanvasSelectedButtons
-        label="Rectangle"
-        icon={Square}
-        onClick={() =>
-          setCanvasState({
-            mode: CanvasMode.Inserting,
-            layerType: LayerType.RectangleBox,
-          })
-        }
-        isActive={
-          canvasState.mode === CanvasMode.Inserting &&
-          canvasState.layerType === LayerType.RectangleBox
-        }
-      />
-      <CanvasSelectedButtons
-        label="Ellipse"
-        icon={Circle}
-        onClick={() =>
-          setCanvasState({
-            mode: CanvasMode.Inserting,
-            layerType: LayerType.Ellipse,
-          })
-        }
-        isActive={
-          canvasState.mode === CanvasMode.Inserting &&
-          canvasState.layerType === LayerType.Ellipse
-        }
-      />
-      <CanvasSelectedButtons
-        label="Pen"
-        icon={Pencil}
-        onClick={() => setCanvasState({ mode: CanvasMode.Freehand })}
-        isActive={canvasState.mode === CanvasMode.Freehand}
-      />
-    </div>
-    <div className="bg-white rounded-md p-1.5 flex flex-col items-center shadow-md">
-      <CanvasSelectedButtons
-        label="Undo"
-        icon={Undo2}
-        onClick={undo}
-        isDisabled={!canUndo}
-      />
-      <CanvasSelectedButtons
-        label="Redo"
-        icon={Redo2}
-        onClick={redo}
-        isDisabled={!canRedo}
-      />
+  UndoAction,
+  RedoAction,
+}: CanvasToolbarProps) => (
+  <div className="absolute top-1/2 -translate-y-1/2 left-5 flex flex-col gap-2 bg-white p-3 rounded-lg shadow-lg border border-gray-200 transition-all hover:shadow-xl">
+    
+      {/* Button for selecting items on the canvas */}
+
+    <CanvasSelectedButtons
+      Elementlabel="Select"
+      Elementicon={MousePointer}
+      onClick={() => setCanvasState({ mode: CanvasMode.Empty })}
+      isActive={[CanvasMode.Empty, CanvasMode.Transforming, CanvasMode.SelectionNet, CanvasMode.Clicking, CanvasMode.Resizing].includes(canvasState.mode)}
+    />
+    <CanvasSelectedButtons
+      Elementlabel="Pen"
+      Elementicon={PenTool}
+      onClick={() => setCanvasState({ mode: CanvasMode.Freehand })}
+      isActive={canvasState.mode === CanvasMode.Freehand}
+    />
+    <CanvasSelectedButtons
+      Elementlabel="Text"
+      Elementicon={Type}
+      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.TextBox })}
+      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.TextBox}
+    />
+    <CanvasSelectedButtons
+      Elementlabel="Sticky Note"
+      Elementicon={StickyNote}
+      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.StickyNote })}
+      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.StickyNote}
+    />
+    <CanvasSelectedButtons
+      Elementlabel="Rectangle"
+      Elementicon={Square}
+      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.RectangleBox })}
+      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.RectangleBox}
+    />
+    <CanvasSelectedButtons
+      Elementlabel="Ellipse"
+      Elementicon={Circle}
+      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.Ellipse })}
+      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse}
+    />
+
+    <div className="flex flex-col gap-2 mt-3 border-t border-gray-300 pt-3">
+      <CanvasSelectedButtons Elementlabel="Undo" Elementicon={Undo} onClick={undo} isDisabled={!UndoAction} />
+      <CanvasSelectedButtons Elementlabel="Redo" Elementicon={Redo} onClick={redo} isDisabled={!RedoAction} />
     </div>
   </div>
-)
+);
 
+// Skeleton loader for the toolbar (used while loading the data)
 export const ToolbarSkeleton = () => (
-  <div className="absolute top-[50%] -translate-y-[50%] left-2 flex flex-col gap-y-4 bg-white h-[360px] w-[52px] shadow-md rounded-md" />
-)
+  <div className="absolute top-1/2 -translate-y-1/2 left-5 w-[60px] h-[400px] bg-gray-200 rounded-lg shadow-lg overflow-hidden animate-pulse">
+    <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />
+    <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />
+    <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />
+    <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />
+    <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />
+    <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />
+    <div className="h-8 w-full bg-gray-300 mt-3 mb-3 rounded-md" />
+    <div className="h-8 w-full bg-gray-300 rounded-md" />
+  </div>
+);

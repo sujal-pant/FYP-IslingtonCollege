@@ -24,7 +24,7 @@ import {
 } from '@/types/canvas';
 
 import { CanvasInfo } from './Canvas-Info';
-import { Toolbar } from './Canvas-ToolBar';
+import { CanvasToolbar } from './Canvas-ToolBar';
 import { CurrentActiveParticipants } from './Current-Active-Participants';
 import { CurrentActivePointers } from './CurrentActivePointersMap';
 import { LayerInformation } from './Layer-Information';
@@ -320,11 +320,11 @@ return(
   {/* Info component: Now dynamically imported to ensure it's only rendered client-side */}
   <CanvasInfo boardId={boardId} />
   <CurrentActiveParticipants />
-  <Toolbar
+  <CanvasToolbar
     canvasState={canvasState}
     setCanvasState={setCanvasState}
-    canRedo={canRedo}
-    canUndo={canUndo}
+    RedoAction={canRedo}
+    UndoAction={canUndo}
     undo={history.undo}
     redo={history.redo}
   />
