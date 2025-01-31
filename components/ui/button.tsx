@@ -19,8 +19,9 @@ const buttonVariants = cva(
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         NotActiveBoard: 'hover:bg-orange-500/30 hover:text-blue-700 transition-colors duration-300 ease-in-out',
-        ActiveBoard: 'bg-teal-500/20 text-teal-700 hover:bg-teal-400/30'
-        
+        ActiveBoard: 'bg-teal-500/20 text-teal-700 hover:bg-teal-400/30',
+        board: 'hover:bg-blue-500/20 hover:text-blue-800',
+        boardActive: 'bg-blue-500/20 text-blue-800',
       },
       size: {
         default: 'h-10 px-4 py-2',

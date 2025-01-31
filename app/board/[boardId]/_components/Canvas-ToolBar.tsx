@@ -76,7 +76,7 @@ export const CanvasToolbar = ({
 );
 
 // Skeleton loader for the toolbar (used while loading the data)
-export const ToolbarSkeleton = () => (
+export const CanvasToolbarSkeleton = () => (
   <div className="absolute top-1/2 -translate-y-1/2 left-5 w-[60px] h-[400px] bg-gray-200 rounded-lg shadow-lg overflow-hidden animate-pulse">
     <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />
     <div className="h-8 w-full bg-gray-300 mb-3 rounded-md" />

@@ -13,12 +13,25 @@ import {
   ResizeCoordinate,
 } from '@/types/canvas'
 
-const COLORS = ['#DC2626', '#D97706', '#059669', '#7C3AED', '#DB2777']
+// Array of predefined colors to be used for user avatars
+const UserDisplayedColor = [
+  '#34D399',  // Green
+  '#10B981',  // Dark Green
+  '#9333EA',  // Purple
+  '#3B82F6',  // Blue
+  '#E11D48',  // Red
+  '#6D28D9',  // Violet
+  '#F43F5E',  // Pink
+  '#EF4444',  // Red 
+  '#22D3EE',  // Light Blue
+];
+
+// Function to assign a color based on the connectionId
+// It uses the % operator to cycle through the colors in the array based on the connectionId.
+export const usercolor = (connectionId: number): string =>
+  UserDisplayedColor[connectionId % UserDisplayedColor.length]; // Ensures the index stays within the bounds of the array
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
-
-export const usercolor = (connectionId: number): string =>
-  COLORS[connectionId % COLORS.length]
 
 export const pointerEventToCanvasPoint = (
   e: React.PointerEvent,
