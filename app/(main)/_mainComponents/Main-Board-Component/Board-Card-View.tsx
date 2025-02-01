@@ -18,8 +18,8 @@ import { customapi } from '@/hooks/custom-api'
 interface BoardCardProps {
   id: string
   title: string
-  authorName: string
-  authorId: string
+  BoardOwnerName: string
+  BoardOwnerId: string
   createdAt: number
   imageUrl: string
   orgId: string
@@ -29,8 +29,8 @@ interface BoardCardProps {
 export const BoardCard = ({
   id,
   title,
-  authorId,
-  authorName,
+  BoardOwnerId,
+  BoardOwnerName,
   createdAt,
   imageUrl,
   orgId,
@@ -39,7 +39,7 @@ export const BoardCard = ({
   const { userId } = useAuth()
 
   // Set the label for the author (use 'You' if the current user is the author)
-  const authorLabel = userId === authorId ? 'You' : authorName
+  const authorLabel = userId === BoardOwnerId ? 'You' : BoardOwnerName
   
   // Format the creation date to show relative time
   const createdAtLabel = formatDistanceToNow(createdAt, {
@@ -48,10 +48,10 @@ export const BoardCard = ({
 
   // API mutation hooks for favoriting/unfavoriting
   const { mutate: onFavorite, pending: pendingFavorite } = customapi(
-    api.board.favorite
+    api.boardController.favorite
   )
   const { mutate: onUnfavorite, pending: pendingUnfavorite } = customapi(
-    api.board.unfavorite
+    api.boardController.unfavorite
   )
 
   // Toggle favorite status based on the current state

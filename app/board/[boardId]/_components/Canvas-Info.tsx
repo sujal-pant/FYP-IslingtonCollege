@@ -27,7 +27,7 @@ export const CanvasInfo = ({ boardId }: InfoProps) => {
   const router = useRouter()
   const { onOpen } = modelrename()
 
-  const boarddata = useQuery(api.board.get, {
+  const boarddata = useQuery(api.boardController.get, {
     id: boardId as Id<'boards'>,
   })
 

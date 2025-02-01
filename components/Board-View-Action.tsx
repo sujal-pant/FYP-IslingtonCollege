@@ -40,7 +40,7 @@ export const BoardViewAction = ({
   const { onOpen } = modelrename();
   
   // Mutation hook for deleting a board
-  const { mutate, pending } = customapi(api.board.remove);
+  const { mutate, pending } = customapi(api.boardController.remove);
 
   // Function to handle copying the board link to the clipboard
   const onCopyLink = () => {

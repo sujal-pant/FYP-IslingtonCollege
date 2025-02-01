@@ -16,14 +16,14 @@ import { api } from '@/convex/_generated/api'
 export const EmptyBoardState = () => {
   const router = useRouter()  // Hook to navigate programmatically in Next.js
   const { organization } = useOrganization()  // Hook to get organization details from Clerk
-  const { mutate, pending } = customapi(api.board.create)  // Mutation hook to create a new board
+  const { mutate, pending } = customapi(api.boardController.create)  // Mutation hook to create a new board
 
   /**
    * Handles the creation of a new board.
    * It ensures that the organization is available, then makes a request to create a board.
    */
   const handleBoardCreation = () => {
-    // If no organization exists, we return early
+    // If no organization exists
     if (!organization) return
 
     // Mutate the API to create the board with the given organization ID and a default title

@@ -1,52 +1,55 @@
 'use client'
 
-import { useRouter } from 'next/navigation' // Importing Next.js navigation hook for programmatic routing
-import { Plus } from 'lucide-react' // Importing the "Plus" icon from Lucide React library for the button
-import { toast } from 'sonner' // Importing toast notification utility for success/error messages
+import { useRouter } from 'next/navigation';
+import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { api } from '@/convex/_generated/api' // Importing the API functions from Convex for board management
-import { customapi } from '@/hooks/custom-api' 
+import { api } from '@/convex/_generated/api';
+import { customapi } from '@/hooks/custom-api';
 
 interface CreatenewboardProps {
-  orgId: string // Organization ID where the new board will be created
-  disabled?: boolean // Optional prop to disable the button
+  orgId: string;
+  disabled?: boolean;
 }
+  /*
+  The Createnewboard component allows users to create a new board within an organization. 
+  Upon success, the user is redirected to the new board, with notifications for success or failure.
+  */
 
 export const Createnewboard = ({ orgId, disabled }: CreatenewboardProps) => {
-  const router = useRouter() 
-  const { mutate, pending } = customapi(api.board.create) 
+  const router = useRouter();
+  // Calling the  API function to create a new board.
+  const { mutate, pending } = customapi(api.boardController.create);
 
-  /**
-   * This function handles the creation of a new board.
-   * It will be triggered when the button is clicked.
-   */
+//function for creating a new board.
   const handleCreateBoard = () => {
-    // Calling the mutate function to create a new board with the specified organization ID and a default title
     mutate({
       orgId,
-      title: 'Untitled', // Default title for the new board
+      title: 'Untitled',
     })
       .then((boardId) => {
-        // On success, show a success notification and redirect to the newly created board
-        toast.success('Board successfully created!')
-        router.push(`/board/${boardId}`) // Navigate to the newly created board
+        toast.success('Board successfully created!');
+        router.push(`/board/${boardId}`);
       })
       .catch(() => {
-        // On error, show an error notification
-        toast.error('Failed to create board. Please try again later.')
-      })
-  }
+        toast.error('Failed to create board. Please try again later.');
+      });
+  };
 
   return (
+        // Button for creating a new board.
     <button
-      disabled={pending || disabled} // Disabling the button if mutation is in progress or explicitly disabled
-      onClick={handleCreateBoard} // Handling the button click to create the board
-      className={`rounded-lg border border-gray-300 bg-gray-100 text-gray-700 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-gray-200 hover:text-gray-900 ${
-        pending || disabled ? 'opacity-50 cursor-not-allowed' : ''
-      }`}
+      disabled={pending || disabled}
+      onClick={handleCreateBoard}
+      className={`flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-300 ease-in-out
+        ${
+          pending || disabled
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-600 text-white shadow-sm hover:shadow-md'
+        }`}
     >
-      <Plus className="h-5 w-5 stroke-1.5" /> {/* Plus icon */}
+      <Plus className="h-4 w-4 text-white" />
       Create Board
     </button>
-  )
-}
+  );
+};

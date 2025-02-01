@@ -16,7 +16,7 @@ interface BoardListProps {
 }
 
 export const MainBoardView = ({ orgId, query }: BoardListProps) => {
-  const boardsData = useQuery(api.boards.get, { orgId, ...query });
+  const boardsData = useQuery(api.getBoards.get, { orgId, ...query });
 
   // Handle loading state (if data is undefined)
   if (boardsData === undefined) {
@@ -82,8 +82,8 @@ export const MainBoardView = ({ orgId, query }: BoardListProps) => {
             id={boarddata._id}
             title={boarddata.title}
             imageUrl={boarddata.imageUrl}
-            authorId={boarddata.authorId}
-            authorName={boarddata.authorName}
+            BoardOwnerId={boarddata.BoardOwnerId}
+            BoardOwnerName={boarddata.BoardOwnerName}
             createdAt={boarddata._creationTime}
             orgId={boarddata.orgId}
             isFavorite={boarddata.isFavorite}
