@@ -53,9 +53,9 @@ export const MainBoardView = ({ orgId, query }: BoardListProps) => {
           width={140}
           alt="Empty"
         />
-        <h2 className="text-2xl font-semibold mt-6">You Do Not Have Favorite Boards</h2>
+        <h2 className="text-2xl font-semibold mt-6">Your Favorite Boards Are Empty</h2>
         <p className="text-muted-foreground text-sm mt-2">
-          Try favoriting a board
+          Looks like you haven't added any favorite boards yet. Start by favoriting your favorite boards to see them here!
         </p>
       </div>
     );
