@@ -4,7 +4,7 @@ import { memo } from 'react'
 import { MousePointer } from 'lucide-react'
 
 import { useOther } from '@/liveblocks.config'
-import { usercolor } from '@/lib/utils'
+import { usercolor } from '@/utils/utils'
 
 interface CursorPresenceProps {
   connectionId: number

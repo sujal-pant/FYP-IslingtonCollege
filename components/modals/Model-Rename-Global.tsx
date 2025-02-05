@@ -16,9 +16,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
-import { customapi } from '@/hooks/custom-api'
+import { customapi } from '@/Custom-hooks/custom-api'
 import { api } from '@/convex/_generated/api'
-import { modelrename } from '@/store/Model-Rename'
+import { modelrename } from '@/components/modals/Model-Rename'
 
 export const ModelRenameGlobal = () => {
   const { mutate, pending } = customapi(api.boardController.update)

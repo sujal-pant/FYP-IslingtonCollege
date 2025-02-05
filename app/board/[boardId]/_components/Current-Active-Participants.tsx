@@ -1,6 +1,6 @@
 'use client';
 
-import { usercolor } from '@/lib/utils'; 
+import { usercolor } from '@/utils/utils'; 
 import { useOthers, useSelf } from '@/liveblocks.config';
 import { UserAvatar } from './User-Presence-Avatar'; 
 import { useState, useEffect, useRef } from 'react';

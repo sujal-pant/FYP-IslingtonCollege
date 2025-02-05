@@ -1,7 +1,7 @@
 'use client';
 
 import { LucideIcon } from 'lucide-react';
-import { ElementoviewProps } from '@/components/Element-View';
+import { ElementoviewProps } from '@/components/Global Display/Element-View';
 import { Button } from '@/components/ui/button';
 
 

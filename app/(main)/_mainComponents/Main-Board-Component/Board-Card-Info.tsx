@@ -1,5 +1,5 @@
 import { Star } from 'lucide-react' // Importing the Star icon from the lucide-react library
-import { cn } from '@/lib/utils' // Importing the utility function `cn` (likely used for conditionally applying class names)
+import { cn } from '@/utils/utils' // Importing the utility function `cn` (likely used for conditionally applying class names)
 
 interface BoardCardInfoProps { // Defining the interface for the props the component will receive
   title: string // Title of the board card

@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { api } from '@/convex/_generated/api';
-import { customapi } from '@/hooks/custom-api';
+import { customapi } from '@/Custom-hooks/custom-api';
 
 interface CreatenewboardProps {
   orgId: string;

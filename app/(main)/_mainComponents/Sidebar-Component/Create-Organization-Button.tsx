@@ -7,7 +7,7 @@ import {
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { ElementoviewProps } from "@/components/Element-View";
+import { ElementoviewProps } from "@/components/Global Display/Element-View";
 
 export const CreateOrganizationButton = () => {
     return (

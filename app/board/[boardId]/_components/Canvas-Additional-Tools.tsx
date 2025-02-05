@@ -3,13 +3,13 @@
 import { memo } from 'react'
 import { BringToFront, SendToBack, Trash2 } from 'lucide-react'
 
-import { ElementoviewProps } from '@/components/Element-View'
+import { ElementoviewProps } from '@/components/Global Display/Element-View'
 import { Button } from '@/components/ui/button'
 import { Camera, Color } from '@/types/canvasRawTypes'
 import { useMutation, useSelf } from '@/liveblocks.config'
-import { selectlayer } from '@/hooks/select-layers'
+import { selectlayer } from '@/Custom-hooks/select-layers'
 import { ColorPicker } from './ColorPicker'
-import { deletelayerhook } from '@/hooks/Delete-Layer-hook'
+import { deletelayerhook } from '@/Custom-hooks/Delete-Layer-hook'
 
 interface SelectionToolsProps {
   camera: Camera

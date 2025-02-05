@@ -4,7 +4,7 @@ import { memo } from 'react';
 
 import { LayerType, RectEdge, ResizeCoordinate } from '@/types/canvasRawTypes';
 import { useSelf, useStorage } from '@/liveblocks.config';
-import { selectlayer } from '@/hooks/select-layers';
+import { selectlayer } from '@/Custom-hooks/select-layers';
 
 interface elementedgsProps {
   onResizeHandlePointerDown: (corner: RectEdge, initialBounds: ResizeCoordinate) => void;

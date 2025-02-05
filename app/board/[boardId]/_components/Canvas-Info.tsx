@@ -6,14 +6,14 @@ import { Poppins } from 'next/font/google'
 import { useQuery } from 'convex/react'
 import { Menu, ArrowLeft } from 'lucide-react'
 
-import { ElementoviewProps } from '@/components/Element-View'
+import { ElementoviewProps } from '@/components/Global Display/Element-View'
 import { api } from '@/convex/_generated/api'
-import { BoardViewAction } from '@/components/Board-View-Action'
+import { BoardViewAction } from '@/app/(main)/_mainComponents/Main-Board-Component/Board-View-Action'
 import { Button } from '@/components/ui/button'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/utils'
 import { Id } from '@/convex/_generated/dataModel'
-import { modelrename } from '@/store/Model-Rename'
+import { modelrename } from '@/components/modals/Model-Rename'
 
 interface InfoProps {
   boardId: string

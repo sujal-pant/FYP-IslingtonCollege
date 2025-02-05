@@ -4,8 +4,8 @@ import Image from 'next/image'
 import { useOrganization, useOrganizationList } from '@clerk/nextjs'
 
 
-import { cn } from '@/lib/utils'
-import { ElementoviewProps } from '@/components/Element-View'
+import { cn } from '@/utils/utils'
+import { ElementoviewProps } from '@/components/Global Display/Element-View'
 
 interface ElementoviewhoverProps {
   id: string

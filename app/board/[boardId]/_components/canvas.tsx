@@ -30,10 +30,10 @@ import { CurrentActivePointers } from './CurrentActivePointersMap';
 import { DifferentLayerRenderInformation } from './Different-Layer-Render-formation';
 import { Elementedgs } from './Elements-Edgs';
 
-import { usercolor, getCanvasCoordinatesFromPointer , resizeBoundary } from '@/lib/utils';
+import { usercolor, getCanvasCoordinatesFromPointer , resizeBoundary } from '@/utils/utils';
 import { LiveObject } from '@liveblocks/client';
 import { SelectionTools } from './Canvas-Additional-Tools'; 
-import { deletelayerhook } from '@/hooks/Delete-Layer-hook';
+import { deletelayerhook } from '@/Custom-hooks/Delete-Layer-hook';
 
 const MAX_NUM_LAYER = 100;
 

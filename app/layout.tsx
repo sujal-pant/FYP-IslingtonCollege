@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { ApplicationAuthProvider } from '@/Application-Providers/Application-Auth-Provider'
+import { ApplicationAuthProvider } from '@/components/Authentication/Application-Auth-Provider'
 import { Toaster } from 'sonner'
-import { ModalProvider } from '@/Application-Providers/model-provider'
+import { ModalProvider } from '@/components/modals/model-provider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {

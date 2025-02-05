@@ -8,12 +8,12 @@ import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
-import { BoardViewAction } from '@/components/Board-View-Action'
+import { BoardViewAction } from '@/app/(main)/_mainComponents/Main-Board-Component/Board-View-Action'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BoardCardInfo } from './Board-Card-Info'
 import { BoardWholeHover } from './Board-Whole-Hover'
 
-import { customapi } from '@/hooks/custom-api'
+import { customapi } from '@/Custom-hooks/custom-api'
 
 interface BoardCardProps {
   id: string

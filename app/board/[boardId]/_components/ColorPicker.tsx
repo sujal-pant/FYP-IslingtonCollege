@@ -1,7 +1,7 @@
 'use client'
 
 import { Color } from '@/types/canvasRawTypes'
-import { colors } from '@/lib/utils'
+import { colors } from '@/utils/utils'
 
 interface ColorPickerProps {
   onChange: (color: Color) => void

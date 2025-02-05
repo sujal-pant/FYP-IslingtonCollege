@@ -1,4 +1,4 @@
-import { ElementoviewProps } from '@/components/Element-View'
+import { ElementoviewProps } from '@/components/Global Display/Element-View'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 // Defining the props for the UserAvatar component.

@@ -15,11 +15,11 @@ import { Button } from '@/components/ui/button';
 
 // Importing API mutations and hooks for managing board actions
 import { api } from '@/convex/_generated/api';
-import { customapi } from '@/hooks/custom-api';
+import { customapi } from '@/Custom-hooks/custom-api';
 
 // Importing components for confirmation modal and renaming functionality
-import { ConfirmModal } from './confirm-model';
-import { modelrename } from '@/store/Model-Rename';
+import { ConfirmModal } from '../../../../components/modals/confirm-model';
+import { modelrename } from '@/components/modals/Model-Rename';
 
 interface BoardViewActionProps {
   children: React.ReactNode; // Children will be the trigger for the dropdown

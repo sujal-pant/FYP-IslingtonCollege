@@ -1,7 +1,7 @@
 'use client'
 
 import { useOrganizationList } from '@clerk/nextjs'
-import { Elementoviewhover } from '../Element-Overview-Hover'
+import { Elementoviewhover } from '../Main-Board-Component/Element-Overview-Hover'
 
 export const OrganizationList = () => {
   const { userMemberships } = useOrganizationList({

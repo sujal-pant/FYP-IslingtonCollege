@@ -1,4 +1,4 @@
-import { colors } from '@/lib/utils'
+import { colors } from '@/utils/utils'
 import { RectangleBoxLayer } from '@/types/canvasRawTypes'
 
 interface RectangleProps {

@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { customapi } from '@/hooks/custom-api'
+import { customapi } from '@/Custom-hooks/custom-api'
 import { api } from '@/convex/_generated/api'
 
 /**
