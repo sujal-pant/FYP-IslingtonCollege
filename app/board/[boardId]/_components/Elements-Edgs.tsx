@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 
-import { LayerType, RectEdge, ResizeCoordinate } from '@/types/canvas';
+import { LayerType, RectEdge, ResizeCoordinate } from '@/types/canvasRawTypes';
 import { useSelf, useStorage } from '@/liveblocks.config';
 import { selectlayer } from '@/hooks/select-layers';
 
@@ -14,7 +14,7 @@ const HANDLE_WIDTH = 8;
 
 export const Elementedgs = memo(({ onResizeHandlePointerDown }: elementedgsProps) => {
   const soleLayerId = useSelf((me) =>
-    me.presence.selection.length === 1 ? me.presence.selection[0] : null
+    me.presence.CurrentlySelectedLayer.length === 1 ? me.presence.CurrentlySelectedLayer[0] : null
   );
 
   const isShowingHandles = useStorage(

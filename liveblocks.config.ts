@@ -1,6 +1,6 @@
 import { createClient,LiveList,LiveMap,LiveObject } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
-import {Layer,Color} from"@/types/canvas"
+import {Layer,Color} from"@/types/canvasRawTypes"
 // Initialize the Liveblocks client with your public API key
 const client = createClient({
   throttle: 16,
@@ -11,7 +11,7 @@ const client = createClient({
 // Define the Presence type (used to represent the real-time state of each user)
 type Presence = {
  cursor: { x: number; y: number } | null,
- selection:string[];
+ CurrentlySelectedLayer:string[];
 };
 
 // Define the Storage type (persistent document shared between users)

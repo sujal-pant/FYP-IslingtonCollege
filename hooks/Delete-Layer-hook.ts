@@ -2,7 +2,7 @@
 import { useSelf, useMutation } from '@/liveblocks.config'
 
 export const deletelayerhook = () => {
-  const currentSelection = useSelf(me => me.presence.selection)
+  const currentSelection = useSelf(me => me.presence.CurrentlySelectedLayer)
 
   return useMutation(
     ({ storage, setMyPresence }) => {
@@ -19,7 +19,7 @@ export const deletelayerhook = () => {
         }
       }
 
-      setMyPresence({ selection: [] }, { addToHistory: true })
+      setMyPresence({ CurrentlySelectedLayer: [] }, { addToHistory: true })
     },
     [currentSelection]
   )

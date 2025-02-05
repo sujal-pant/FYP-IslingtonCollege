@@ -7,11 +7,11 @@ import {
   Color,
   Layer,
   LayerType,
-  PathLayer,
+  
   Point,
   RectEdge,
   ResizeCoordinate,
-} from '@/types/canvas'
+} from '@/types/canvasRawTypes'
 
 // Array of predefined colors to be used for user avatars
 const UserDisplayedColor = [
@@ -33,18 +33,20 @@ export const usercolor = (connectionId: number): string =>
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
-export const pointerEventToCanvasPoint = (
+// Function to get the canvas coordinates from a pointer event, taking into account the camera's offset
+export const getCanvasCoordinatesFromPointer  = (
   e: React.PointerEvent,
   camera: Camera
 ) => {
   return {
+    // Calculate the X coordinate on the canvas by subtracting the camera's X offset from the pointer's X position
     x: Math.round(e.clientX) - camera.x,
+    // Calculate the Y coordinate on the canvas by subtracting the camera's Y offset from the pointer's Y position
     y: Math.round(e.clientY) - camera.y,
   }
 }
 
 export function colors (color: Color) {
-
 
   return `#${color.r.toString(16).padStart(2, '0')}${color.g
     .toString(16)

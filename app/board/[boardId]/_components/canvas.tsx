@@ -21,16 +21,16 @@ import {
   Point,
   RectEdge,
   ResizeCoordinate,
-} from '@/types/canvas';
+} from '@/types/canvasRawTypes';
 
 import { CanvasInfo } from './Canvas-Info';
 import { CanvasToolbar } from './Canvas-ToolBar';
 import { CurrentActiveParticipants } from './Current-Active-Participants';
 import { CurrentActivePointers } from './CurrentActivePointersMap';
-import { LayerInformation } from './Layer-Information';
+import { DifferentLayerRenderInformation } from './Different-Layer-Render-formation';
 import { Elementedgs } from './Elements-Edgs';
 
-import { usercolor, pointerEventToCanvasPoint, resizeBoundary } from '@/lib/utils';
+import { usercolor, getCanvasCoordinatesFromPointer , resizeBoundary } from '@/lib/utils';
 import { LiveObject } from '@liveblocks/client';
 import { SelectionTools } from './Canvas-Additional-Tools'; 
 import { deletelayerhook } from '@/hooks/Delete-Layer-hook';
@@ -59,30 +59,36 @@ export const Canvas = ({ boardId }: CanvasProps) => {
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
 
-  const Addlayer = useMutation(
+
+  /*
+  This function adds a new layer to the canvas by generating a unique ID, setting its initial position, dimensions, 
+  and fill color, and storing it in the layer collection. It also ensures the maximum layer limit is not exceeded, updates
+  the user's selected layer, and resets the canvas state after insertion.
+  */
+  const AddlayerOnCanvas = useMutation(
     (
       { storage, setMyPresence },
       layerType: LayerType.Ellipse | LayerType.RectangleBox | LayerType.TextBox | LayerType.StickyNote,
-      position: Point
+      positionOnScreen: Point
     ) => {
-      const liveLayers = storage.get('layers');
-      if (liveLayers.size >= MAX_NUM_LAYER) return;
+      const infoAllLayers = storage.get('layers');
+      if (infoAllLayers.size >= MAX_NUM_LAYER) return;
 
-      const liveLayerIds = storage.get('layerIds');
-      const layerId = nanoid();
-      const layer = new LiveObject({
+      const infoAllLayerIds = storage.get('layerIds');
+      const newlayerId = nanoid();
+      const newInsertlayer = new LiveObject({
         type: layerType,
-        x: position.x,
-        y: position.y,
+        x: positionOnScreen.x,
+        y: positionOnScreen.y,
         height: 100,
         width: 100,
         fill: LastUsedColor,
       });
 
-      liveLayerIds.push(layerId);
-      liveLayers.set(layerId, layer);
+      infoAllLayerIds.push(newlayerId);
+      infoAllLayers.set(newlayerId, newInsertlayer);
 
-      setMyPresence({ selection: [layerId] }, { addToHistory: true });
+      setMyPresence({ CurrentlySelectedLayer: [newlayerId] }, { addToHistory: true });
       setCanvasState({ mode: CanvasMode.Empty });
     },
     [LastUsedColor]
@@ -101,7 +107,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
       const liveLayers = storage.get('layers')
 
-      for (const id of self.presence.selection) {
+      for (const id of self.presence.CurrentlySelectedLayer) {
         const layer = liveLayers.get(id)
 
         if (layer) {
@@ -117,8 +123,8 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     [canvasState]
   )
   const clearSelection = useMutation(({ self, setMyPresence }) => {
-    if (self.presence.selection.length > 0) {
-      setMyPresence({ selection: [] }, { addToHistory: true })
+    if (self.presence.CurrentlySelectedLayer.length > 0) {
+      setMyPresence({ CurrentlySelectedLayer: [] }, { addToHistory: true })
     }
   }, [])
 
@@ -135,7 +141,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       )
 
       const liveLayers = storage.get('layers')
-      const layer = liveLayers.get(self.presence.selection[0])
+      const layer = liveLayers.get(self.presence.CurrentlySelectedLayer[0])
 
       if (layer) {
         layer.update(bounds)
@@ -168,7 +174,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     ({ setMyPresence }, e: React.PointerEvent) => {
       e.preventDefault();
 
-      const current = pointerEventToCanvasPoint(e, camera);
+      const current = getCanvasCoordinatesFromPointer (e, camera);
       
       if (canvasState.mode === CanvasMode.Transforming) {
         MoveSelectedlayers(current);
@@ -188,7 +194,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
-      const point = pointerEventToCanvasPoint(e, camera)
+      const point = getCanvasCoordinatesFromPointer (e, camera)
 
       if (canvasState.mode === CanvasMode.Inserting) {
         return
@@ -200,54 +206,75 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     },
     [camera, canvasState.mode, setCanvasState, ]
   )
-  const handlePointerUp = useMutation(
-    ({}, e) => {
-      const point = pointerEventToCanvasPoint(e, camera)
 
-      if (
-        canvasState.mode === CanvasMode.Empty ||
-        canvasState.mode === CanvasMode.Clicking
-      ) {
-        clearSelection()
-        setCanvasState({
-          mode: CanvasMode.Empty,
-        })
- 
-      } else if (canvasState.mode === CanvasMode.Inserting) {
-        Addlayer(canvasState.layerType, point)
-      } else {
-        setCanvasState({
-          mode: CanvasMode.Empty,
-        })
-      }
+/*
+  The handlePointerUp function is a mutation hook that manages the pointer-up event within the canvas. 
+  It updates the canvas state based on the current interaction mode. If the canvas is in Empty or Clicking mode,
+  it clears any selection and resets the canvas state. If the mode is Inserting, it adds a new layer to the canvas at the specified position. 
+  After each interaction, the function resumes history tracking, ensuring all actions are recorded.
+*/
+const handlePointerUp = useMutation(
+  ({}, e) => {
+    // Getting the canvas coordinates from the pointer event and the camera position
+    const point = getCanvasCoordinatesFromPointer(e, camera)
 
-      history.resume()
-    },
-    [
-      setCanvasState,
-      camera,
-      canvasState,
-      history,
-      Addlayer,
-      clearSelection,
-      
-    ]
-  )
-  const selections = useOthersMapped((other) => other.presence.selection);
+    // Checking the current canvas state mode
+    if (
+      canvasState.mode === CanvasMode.Empty || // If in Empty mode or clicking mode
+      canvasState.mode === CanvasMode.Clicking
+    ) {
+      // Clearing any selection and reseting canvas mode to Empty
+      clearSelection()
+      setCanvasState({
+        mode: CanvasMode.Empty, // Setting the canvas state back to Empty
+      })
+    } else if (canvasState.mode === CanvasMode.Inserting) {
+      // If the current mode is Inserting, adding the a newly created layer to the canvas
+      AddlayerOnCanvas(canvasState.layerType, point)
+    } else {
+      // For any other modes, reseting canvas state to Empty
+      setCanvasState({
+        mode: CanvasMode.Empty,
+      })
+    }
+
+    // Resuming history tracking 
+    history.resume()
+  },
+  [
+    setCanvasState, // Function to update canvas state
+    camera, // Current camera position
+    canvasState, // Current canvas state
+    history, // History object to track changes
+    AddlayerOnCanvas, // Function to add layers to the canvas
+    clearSelection, // Function to clear any selected layers
+  ]
+)
+/*
+ This CurrentSelectedLayers retrieves the currently selected layer of other users in real-time. 
+ It collects this data to track which layers are being selected by all users.
+*/  
+const CurrentSelectedLayers = useOthersMapped((user) => user.presence.CurrentlySelectedLayer);
   
-  const mapLayerToSelectionColor = useMemo(() => {
-    const layerToColor: Record<string, string> = {};
+/* The mapColorToLayerByConnId function creates a mapping of layer IDs to colors based on user selections.
+ It uses 'useMemo' to ensure that the mapping is only recalculated when 'CurrenetSelectedLayers' changes.
+*/
+  const mapColorToLayarByConnId = useMemo(() => {
+    // Initializing an empty object to store the mapping of layer IDs to colors
+    const ColorAsPerConnIds: Record<string, string> = {};
+  // Iterating over each user and their selected layers
 
-    for (const user of selections) {
-      const [connectionId, selection] = user;
+    for (const user of CurrentSelectedLayers) {
+      const [connectionId, CurrentlySelectedLayer] = user;
+    // Iterating over each selected layer and mapping the layerId to the corresponding color based on connectionId
 
-      for (const layerId of selection) {
-        layerToColor[layerId] = usercolor(connectionId);
+      for (const layerId of CurrentlySelectedLayer) {
+        ColorAsPerConnIds[layerId] = usercolor(connectionId);// Assigning color for each layer
       }
     }
 
-    return layerToColor;
-  }, [selections]);
+    return ColorAsPerConnIds;
+  }, [CurrentSelectedLayers]);
   
 
   const handleLayerPointerDown = useMutation(
@@ -259,10 +286,10 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       history.pause();
       e.stopPropagation();
 
-      const point = pointerEventToCanvasPoint(e, camera);
+      const point = getCanvasCoordinatesFromPointer (e, camera);
 
-      if (!self.presence.selection.includes(layerId)) {
-        setMyPresence({ selection: [layerId] }, { addToHistory: true });
+      if (!self.presence.CurrentlySelectedLayer.includes(layerId)) {
+        setMyPresence({ CurrentlySelectedLayer: [layerId] }, { addToHistory: true });
       }
 
       setCanvasState({ mode: CanvasMode.Transforming, current: point });
@@ -294,7 +321,7 @@ useEffect(() => {
         if (e.ctrlKey || e.metaKey) {
           // Delete
           deleteCurrent();
-          e.preventDefault(); // Prevent default browser behavior
+          e.preventDefault(); 
           break;
         }
         break;
@@ -304,10 +331,10 @@ useEffect(() => {
     }
   }
 
-  // Add event listener on component mount
+  // Adding event listener on component mount
   window.addEventListener('keydown', onKeyDown);
 
-  // Clean up event listener on component unmount
+  // Cleaning up event listener on component unmount
   return () => {
     window.removeEventListener('keydown', onKeyDown);
   };
@@ -317,7 +344,6 @@ useEffect(() => {
 
 return(
   <main className="h-full w-full relative bg-neutral-100 touch-none">
-  {/* Info component: Now dynamically imported to ensure it's only rendered client-side */}
   <CanvasInfo boardId={boardId} />
   <CurrentActiveParticipants />
   <CanvasToolbar
@@ -338,12 +364,14 @@ return(
     onPointerUp={handlePointerUp}
   >
     <g style={{ transform: `translate(${camera.x}px, ${camera.y}px)` }}>
+    {/* Mapping over each layerId in LayerIds array to render a DifferentLayerRenderInformation component for each layer.*/}
       {LayerIds.map(layerId => (
-        <LayerInformation
+
+        <DifferentLayerRenderInformation
           key={layerId}
           id={layerId}
           onLayerPointerDown={handleLayerPointerDown}
-          selectionColor={mapLayerToSelectionColor[layerId]}
+          layerColorWithConnId={mapColorToLayarByConnId[layerId]}
         />
       ))}
       <Elementedgs onResizeHandlePointerDown={handleResizeStart} />

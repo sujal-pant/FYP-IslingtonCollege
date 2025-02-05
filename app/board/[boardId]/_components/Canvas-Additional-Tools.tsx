@@ -5,7 +5,7 @@ import { BringToFront, SendToBack, Trash2 } from 'lucide-react'
 
 import { ElementoviewProps } from '@/components/Element-View'
 import { Button } from '@/components/ui/button'
-import { Camera, Color } from '@/types/canvas'
+import { Camera, Color } from '@/types/canvasRawTypes'
 import { useMutation, useSelf } from '@/liveblocks.config'
 import { selectlayer } from '@/hooks/select-layers'
 import { ColorPicker } from './ColorPicker'
@@ -18,7 +18,7 @@ interface SelectionToolsProps {
 
 export const SelectionTools = memo(
   ({ camera, setLastUsedColor }: SelectionToolsProps) => {
-    const selection = useSelf(me => me.presence.selection)
+    const selection = useSelf(me => me.presence.CurrentlySelectedLayer)
 
     const setFill = useMutation(
       ({ storage }, fill: Color) => {

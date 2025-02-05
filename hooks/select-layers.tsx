@@ -1,6 +1,6 @@
 import { shallow } from '@liveblocks/react'
 
-import { Layer, ResizeCoordinate } from '@/types/canvas'
+import { Layer, ResizeCoordinate } from '@/types/canvasRawTypes'
 import { useStorage, useSelf } from '@/liveblocks.config'
 
 const Box = (layers: Layer[]): ResizeCoordinate | null => {
@@ -44,7 +44,7 @@ const Box = (layers: Layer[]): ResizeCoordinate | null => {
 }
 
 export const selectlayer = () => {
-  const selection = useSelf(me => me.presence.selection)
+  const selection = useSelf(me => me.presence.CurrentlySelectedLayer)
 
   return useStorage(root => {
     const currentselectedLayers = selection

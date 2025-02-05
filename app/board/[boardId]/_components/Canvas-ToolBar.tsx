@@ -1,4 +1,4 @@
-import { CanvasMode, CanvasState, LayerType } from '@/types/canvas';
+import { CanvasMode, CanvasState, LayerType } from '@/types/canvasRawTypes';
 import {MousePointer,PenTool,Type,StickyNote, Square, Circle,Undo,Redo,} from 'lucide-react';
 import { CanvasSelectedButtons } from './Canvas-Selected-Buttons';
 

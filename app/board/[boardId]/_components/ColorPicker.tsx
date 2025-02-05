@@ -1,6 +1,6 @@
 'use client'
 
-import { Color } from '@/types/canvas'
+import { Color } from '@/types/canvasRawTypes'
 import { colors } from '@/lib/utils'
 
 interface ColorPickerProps {
