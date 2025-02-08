@@ -13,6 +13,16 @@ const placeholderImages = [
   '/placeholders/8.svg',
   '/placeholders/9.svg',
   '/placeholders/10.svg',
+  '/placeholders/11.svg',
+  '/placeholders/12.svg',
+  '/placeholders/13.svg',
+  '/placeholders/14.svg',
+  '/placeholders/15.svg',
+  '/placeholders/16.svg',
+  '/placeholders/17.svg',
+  '/placeholders/18.svg',
+  '/placeholders/19.svg',
+  '/placeholders/20.svg',
 ];
 
 // Mutation to create a new board
