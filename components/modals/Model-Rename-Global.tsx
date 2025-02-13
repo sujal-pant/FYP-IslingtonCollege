@@ -21,7 +21,7 @@ import { api } from '@/convex/_generated/api'
 import { modelrename } from '@/components/modals/Model-Rename'
 
 export const ModelRenameGlobal = () => {
-  const { mutate, pending } = customapi(api.boardController.update)
+  const { mutate, pending } = customapi(api.boardController.updateboard)
 
   const { isOpen, onClose, initialValues } = modelrename()
 

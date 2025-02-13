@@ -38,20 +38,20 @@ export const BoardCard = ({
 }: BoardCardProps) => {
   const { userId } = useAuth()
 
-  // Set the label for the author (use 'You' if the current user is the author)
+  // Setting  the label for the author (using 'You' if the current user is the author)
   const authorLabel = userId === BoardOwnerId ? 'You' : BoardOwnerName
   
-  // Format the creation date to show relative time
+  // Formatting the creation date to show relative time
   const createdAtLabel = formatDistanceToNow(createdAt, {
     addSuffix: true,
   })
 
   // API mutation hooks for favoriting/unfavoriting
   const { mutate: onFavorite, pending: pendingFavorite } = customapi(
-    api.boardController.favorite
+    api.boardController.markfavoriteBoard
   )
   const { mutate: onUnfavorite, pending: pendingUnfavorite } = customapi(
-    api.boardController.unfavorite
+    api.boardController.markUnfavoriteBoard
   )
 
   // Toggle favorite status based on the current state
@@ -75,7 +75,7 @@ export const BoardCard = ({
             </button>
           </BoardViewAction>
         </div>
-        {/* Display board card info like title, author, and creation date */}
+        {/* Displaying board card having info like title, author, and creation date */}
         <BoardCardInfo
           isFavorite={isFavorite}
           title={title}

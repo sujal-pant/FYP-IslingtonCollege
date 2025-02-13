@@ -1,10 +1,8 @@
 'use client'
 
-import { Link2, Pencil, Trash2 } from 'lucide-react'; // Importing necessary icons for actions
-import { toast } from 'sonner'; // For displaying toast notifications
-import { DropdownMenuContentProps } from '@radix-ui/react-dropdown-menu'; // Types for dropdown props
-
-// Importing components for the dropdown menu and button
+import { Link2, Pencil, Trash2 } from 'lucide-react'; 
+import { toast } from 'sonner'; 
+import { DropdownMenuContentProps } from '@radix-ui/react-dropdown-menu';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,21 +10,17 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'; 
 import { Button } from '@/components/ui/button';
-
-// Importing API mutations and hooks for managing board actions
 import { api } from '@/convex/_generated/api';
 import { customapi } from '@/Custom-hooks/custom-api';
-
-// Importing components for confirmation modal and renaming functionality
 import { ConfirmModal } from '../../../../components/modals/confirm-model';
 import { modelrename } from '@/components/modals/Model-Rename';
 
 interface BoardViewActionProps {
-  children: React.ReactNode; // Children will be the trigger for the dropdown
-  side?: DropdownMenuContentProps['side']; // Optional dropdown positioning
-  sideOffset?: DropdownMenuContentProps['sideOffset']; // Optional offset for dropdown
-  id: string; // The unique identifier for the board
-  title: string; // Title of the board
+  children: React.ReactNode; 
+  side?: DropdownMenuContentProps['side']; 
+  sideOffset?: DropdownMenuContentProps['sideOffset']; 
+  id: string; 
+  title: string; 
 }
 
 export const BoardViewAction = ({
@@ -40,7 +34,7 @@ export const BoardViewAction = ({
   const { onOpen } = modelrename();
   
   // Mutation hook for deleting a board
-  const { mutate, pending } = customapi(api.boardController.remove);
+  const { mutate, pending } = customapi(api.boardController.removeBoard);
 
   // Function to handle copying the board link to the clipboard
   const onCopyLink = () => {
@@ -59,15 +53,13 @@ export const BoardViewAction = ({
 
   return (
     <DropdownMenu>
-      {/* Trigger element for dropdown (e.g., button or icon) */}
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       
-      {/* Dropdown content, positioned based on props */}
       <DropdownMenuContent
-        onClick={(e) => e.stopPropagation()} // Prevents closing dropdown on item click
+        onClick={(e) => e.stopPropagation()} 
         side={side}
         sideOffset={sideOffset}
-        className="w-60" // Width of the dropdown content
+        className="w-60" 
       >
         {/* Option to copy the board link */}
         <DropdownMenuItem onClick={onCopyLink} className="p-3 cursor-pointer">

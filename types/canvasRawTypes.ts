@@ -80,21 +80,21 @@ export enum RectEdge {
     Left = 4, // Resizing from the left edge
     Right = 8, // Resizing from the right edge
 }
-export type CanvasState =
+export type CanvasInteractionState =
     | {
-        mode: CanvasMode.Empty // No active interaction
+        actionType : ActionMode .Empty // No active interaction
       }
     | {
-        mode: CanvasMode.SelectionNet // Dragging to select multiple elements
+        actionType : ActionMode .SelectionNet // Dragging to select multiple elements
         origin: Point // Starting point of the selection
         current?: Point //  current position
       }
     | {
-        mode: CanvasMode.Transforming // Moving or rotating layers
+        actionType : ActionMode .Transforming // Moving or rotating layers
         current: Point // Current transformation point
       }
     | {
-        mode: CanvasMode.Inserting // Inserting a new layer
+        actionType : ActionMode .Inserting // Inserting a new layer
         layerType:
           | LayerType.Ellipse
           | LayerType.RectangleBox
@@ -102,19 +102,19 @@ export type CanvasState =
           | LayerType.StickyNote
       }
     | {
-        mode: CanvasMode.Freehand // Drawing a freehand path
+        actionType : ActionMode .Freehand // Drawing a freehand path
       }
     | {
-        mode: CanvasMode.Clicking // Clicking an element
+        actionType : ActionMode .Clicking // Clicking an element
         origin: Point // Click position
       }
     | {
-        mode: CanvasMode.Resizing // Resizing an element
+        actionType : ActionMode .Resizing // Resizing an element
         initialBounds: ResizeCoordinate // Initial dimensions before resizing
-        corner: RectEdge // Corner or edge being resized
+        edge: RectEdge // Corner or edge being resized
       }
 
-export enum CanvasMode {
+export enum ActionMode  {
     Empty, // No interaction
     Clicking, // Clicking on an element
     SelectionNet, // Selecting multiple elements with a drag selection

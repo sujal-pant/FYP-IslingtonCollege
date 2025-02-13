@@ -1,4 +1,4 @@
-import { CanvasMode, CanvasState, LayerType } from '@/types/canvasRawTypes';
+import { ActionMode , CanvasInteractionState, LayerType } from '@/types/canvasRawTypes';
 import {MousePointer,PenTool,Type,StickyNote, Square, Circle,Undo,Redo,} from 'lucide-react';
 import { CanvasSelectedButtons } from './Canvas-Selected-Buttons';
 
@@ -15,8 +15,8 @@ interface CanvasToolbarProps {
   RedoAction: boolean;
 
 // The current state of the canvas (mode, layerType)
-  canvasState: CanvasState;
-  setCanvasState: (state: CanvasState) => void;// Function to update the canvas state
+  canvasState: CanvasInteractionState;
+  setCanvasState: (state: CanvasInteractionState) => void;// Function to update the canvas state
 }
 
 export const CanvasToolbar = ({
@@ -34,38 +34,38 @@ export const CanvasToolbar = ({
     <CanvasSelectedButtons
       Elementlabel="Select"
       Elementicon={MousePointer}
-      onClick={() => setCanvasState({ mode: CanvasMode.Empty })}
-      isActive={[CanvasMode.Empty, CanvasMode.Transforming, CanvasMode.SelectionNet, CanvasMode.Clicking, CanvasMode.Resizing].includes(canvasState.mode)}
+      onClick={() => setCanvasState({ actionType : ActionMode .Empty })}
+      isActive={[ActionMode .Empty, ActionMode .Transforming, ActionMode .SelectionNet, ActionMode .Clicking, ActionMode .Resizing].includes(canvasState.actionType)}
     />
     <CanvasSelectedButtons
       Elementlabel="Pen"
       Elementicon={PenTool}
-      onClick={() => setCanvasState({ mode: CanvasMode.Freehand })}
-      isActive={canvasState.mode === CanvasMode.Freehand}
+      onClick={() => setCanvasState({ actionType : ActionMode .Freehand })}
+      isActive={canvasState.actionType  === ActionMode .Freehand}
     />
     <CanvasSelectedButtons
       Elementlabel="Text"
       Elementicon={Type}
-      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.TextBox })}
-      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.TextBox}
+      onClick={() => setCanvasState({ actionType : ActionMode .Inserting, layerType: LayerType.TextBox })}
+      isActive={canvasState.actionType  === ActionMode .Inserting && canvasState.layerType === LayerType.TextBox}
     />
     <CanvasSelectedButtons
       Elementlabel="Sticky Note"
       Elementicon={StickyNote}
-      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.StickyNote })}
-      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.StickyNote}
+      onClick={() => setCanvasState({ actionType : ActionMode .Inserting, layerType: LayerType.StickyNote })}
+      isActive={canvasState.actionType  === ActionMode .Inserting && canvasState.layerType === LayerType.StickyNote}
     />
     <CanvasSelectedButtons
       Elementlabel="Rectangle"
       Elementicon={Square}
-      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.RectangleBox })}
-      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.RectangleBox}
+      onClick={() => setCanvasState({ actionType : ActionMode .Inserting, layerType: LayerType.RectangleBox })}
+      isActive={canvasState.actionType  === ActionMode .Inserting && canvasState.layerType === LayerType.RectangleBox}
     />
     <CanvasSelectedButtons
       Elementlabel="Ellipse"
       Elementicon={Circle}
-      onClick={() => setCanvasState({ mode: CanvasMode.Inserting, layerType: LayerType.Ellipse })}
-      isActive={canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse}
+      onClick={() => setCanvasState({ actionType : ActionMode .Inserting, layerType: LayerType.Ellipse })}
+      isActive={canvasState.actionType  === ActionMode .Inserting && canvasState.layerType === LayerType.Ellipse}
     />
 
     <div className="flex flex-col gap-2 mt-3 border-t border-gray-300 pt-3">

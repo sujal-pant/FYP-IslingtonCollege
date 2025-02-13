@@ -19,7 +19,7 @@ interface CreatenewboardProps {
 export const Createnewboard = ({ orgId, disabled }: CreatenewboardProps) => {
   const router = useRouter();
   // Calling the  API function to create a new board.
-  const { mutate, pending } = customapi(api.boardController.create);
+  const { mutate, pending } = customapi(api.boardController.createnewboard);
 
 //function for creating a new board.
   const handleCreateBoard = () => {

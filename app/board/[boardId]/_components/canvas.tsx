@@ -14,8 +14,8 @@ import {
 
 import {
   Camera,
-  CanvasMode,
-  CanvasState,
+  ActionMode ,
+  CanvasInteractionState,
   Color,
   LayerType,
   Point,
@@ -30,7 +30,7 @@ import { CurrentActivePointers } from './CurrentActivePointersMap';
 import { DifferentLayerRenderInformation } from './Different-Layer-Render-formation';
 import { Elementedgs } from './Elements-Edgs';
 
-import { usercolor, getCanvasCoordinatesFromPointer , resizeBoundary } from '@/utils/utils';
+import { usercolor, getCanvasCoordinatesFromPointer , calculateResizedBoundary } from '@/utils/utils';
 import { LiveObject } from '@liveblocks/client';
 import { SelectionTools } from './Canvas-Additional-Tools'; 
 import { deletelayerhook } from '@/Custom-hooks/Delete-Layer-hook';
@@ -42,10 +42,10 @@ interface CanvasProps {
 }
 
 export const Canvas = ({ boardId }: CanvasProps) => {
-  const LayerIds = useStorage((root) => root.layerIds);
+  const CurrentLayerIds = useStorage((root) => root.layerIds);
 
-  const [canvasState, setCanvasState] = useState<CanvasState>({
-    mode: CanvasMode.Empty,
+  const [CurrentcanvasState, UpdateCurrentCanvasState] = useState<CanvasInteractionState>({
+    actionType : ActionMode .Empty,
   });
 
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
@@ -89,38 +89,52 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       infoAllLayers.set(newlayerId, newInsertlayer);
 
       setMyPresence({ CurrentlySelectedLayer: [newlayerId] }, { addToHistory: true });
-      setCanvasState({ mode: CanvasMode.Empty });
+      UpdateCurrentCanvasState({ actionType : ActionMode .Empty });
     },
     [LastUsedColor]
   );
 
-  const MoveSelectedlayers = useMutation(
+
+// Function to move the currently selected layer based on user interaction
+  const MoveCurrentSelectedlayer = useMutation(
     ({ storage, self }, point: Point) => {
-      if (canvasState.mode !== CanvasMode.Transforming) {
+    
+      // Ensuring movement occurs only in "Transforming" mode
+
+      if (CurrentcanvasState.actionType  !== ActionMode .Transforming) {
         return
       }
 
-      const offset = {
-        x: point.x - canvasState.current.x,
-        y: point.y - canvasState.current.y,
+    // Calculating the movement offset relative to the last recorded position
+
+      const pointsonScreen = {
+        x: point.x - CurrentcanvasState.current.x,
+        y: point.y - CurrentcanvasState.current.y,
       }
 
-      const liveLayers = storage.get('layers')
+      // Retrieving all layers from storage
+
+      const getCurrentLayer = storage.get('layers')
+
+      // Iterating through the selected layer IDs and update their positions
 
       for (const id of self.presence.CurrentlySelectedLayer) {
-        const layer = liveLayers.get(id)
+        const layerinfo = getCurrentLayer.get(id)
 
-        if (layer) {
-          layer.update({
-            x: layer.get('x') + offset.x,
-            y: layer.get('y') + offset.y,
+          // Updating layer position by applying the calculated movement offset
+
+        if (layerinfo) {
+          layerinfo.update({
+            x: layerinfo.get('x') + pointsonScreen.x,
+            y: layerinfo.get('y') + pointsonScreen.y,
           })
         }
       }
+      // Updating the canvas state to reflect the new transformation position
 
-      setCanvasState({ mode: CanvasMode.Transforming, current: point })
+      UpdateCurrentCanvasState({ actionType : ActionMode .Transforming, current: point })
     },
-    [canvasState]
+    [CurrentcanvasState]
   )
   const clearSelection = useMutation(({ self, setMyPresence }) => {
     if (self.presence.CurrentlySelectedLayer.length > 0) {
@@ -128,38 +142,60 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     }
   }, [])
 
-  const resizeLayer = useMutation(
+  /*
+    This Function help in resizing the selected layer on the canvas.
+     It listens for a resizing event and updates the selected layer's boundary
+    based on the current mouse position.
+   */
+  const resizeSelctedLayer = useMutation(
     ({ storage, self }, point: Point) => {
-      if (canvasState.mode !== CanvasMode.Resizing) {
+
+          // Ensuring that the canvas is in resizing mode before proceeding
+
+      if (CurrentcanvasState.actionType  !== ActionMode .Resizing) {
         return
       }
 
-      const bounds = resizeBoundary(
-        canvasState.initialBounds,
-        canvasState.corner,
+    // Calculating the new boundary of the selected layer based on the current mouse position
+
+      const Currentbounds = calculateResizedBoundary(
+        CurrentcanvasState.initialBounds,
+        CurrentcanvasState.edge,
         point
       )
+    // Retrieving the current layers from the storage
 
-      const liveLayers = storage.get('layers')
-      const layer = liveLayers.get(self.presence.CurrentlySelectedLayer[0])
+      const currentLayerInfo = storage.get('layers')
+    // Getting the selected layer based on the presence information
 
-      if (layer) {
-        layer.update(bounds)
+      const Selecetedlayer = currentLayerInfo.get(self.presence.CurrentlySelectedLayer[0])
+    // If the layer is found, updating its boundary with the newly calculated size
+
+      if (Selecetedlayer) {
+        Selecetedlayer.update(Currentbounds)
       }
     },
-    [canvasState]
+    [CurrentcanvasState]
   )
-  const handleResizeStart = useCallback(
-    (corner: RectEdge, initialBounds: ResizeCoordinate) => {
-      history.pause()
-      setCanvasState({
-        mode: CanvasMode.Resizing,
-        initialBounds,
-        corner,
-      })
-    },
-    [history]
-  )
+ /**
+ * 
+ * This function is called when the user begins to resize a layer or object on the canvas,
+ * and it ensures that the resizing process is tracked properly by updating the canvas state.
+ */
+const handleResizeStart = useCallback(
+  (edge: RectEdge, initialBounds: ResizeCoordinate) => {
+    // Pauses the history to prevent changes during resizing from being added to undo/redo history
+    history.pause()
+
+    // Updates the current canvas state to indicate that resizing has started
+    UpdateCurrentCanvasState({
+      actionType : ActionMode .Resizing, 
+      initialBounds,             
+      edge,                    
+    })
+  },
+  [history] 
+)
 
   const handleCameraMove = useCallback((e: React.WheelEvent) => {
     setCamera(camera => ({
@@ -176,16 +212,16 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
       const current = getCanvasCoordinatesFromPointer (e, camera);
       
-      if (canvasState.mode === CanvasMode.Transforming) {
-        MoveSelectedlayers(current);
+      if (CurrentcanvasState.actionType  === ActionMode .Transforming) {
+        MoveCurrentSelectedlayer(current);
       }
-      else if(canvasState.mode === CanvasMode.Resizing) {
-        resizeLayer(current);
+      else if(CurrentcanvasState.actionType  === ActionMode .Resizing) {
+        resizeSelctedLayer(current);
       }
 
       setMyPresence({ cursor: current });
     },
-    [camera, canvasState, resizeLayer,MoveSelectedlayers]
+    [camera, CurrentcanvasState, resizeSelctedLayer,MoveCurrentSelectedlayer]
   );
   
   const handlePointerLeave = useMutation(({ setMyPresence }) => {
@@ -196,15 +232,15 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     (e: React.PointerEvent) => {
       const point = getCanvasCoordinatesFromPointer (e, camera)
 
-      if (canvasState.mode === CanvasMode.Inserting) {
+      if (CurrentcanvasState.actionType  === ActionMode .Inserting) {
         return
       }
 
       
 
-      setCanvasState({ origin: point, mode: CanvasMode.Clicking })
+      UpdateCurrentCanvasState({ origin: point, actionType : ActionMode .Clicking })
     },
-    [camera, canvasState.mode, setCanvasState, ]
+    [camera, CurrentcanvasState.actionType , UpdateCurrentCanvasState, ]
   )
 
 /*
@@ -220,21 +256,21 @@ const handlePointerUp = useMutation(
 
     // Checking the current canvas state mode
     if (
-      canvasState.mode === CanvasMode.Empty || // If in Empty mode or clicking mode
-      canvasState.mode === CanvasMode.Clicking
+      CurrentcanvasState.actionType  === ActionMode .Empty || // If in Empty mode or clicking mode
+      CurrentcanvasState.actionType  === ActionMode .Clicking
     ) {
       // Clearing any selection and reseting canvas mode to Empty
       clearSelection()
-      setCanvasState({
-        mode: CanvasMode.Empty, // Setting the canvas state back to Empty
+      UpdateCurrentCanvasState({
+        actionType : ActionMode .Empty, // Setting the canvas state back to Empty
       })
-    } else if (canvasState.mode === CanvasMode.Inserting) {
+    } else if (CurrentcanvasState.actionType  === ActionMode .Inserting) {
       // If the current mode is Inserting, adding the a newly created layer to the canvas
-      AddlayerOnCanvas(canvasState.layerType, point)
+      AddlayerOnCanvas(CurrentcanvasState.layerType, point)
     } else {
       // For any other modes, reseting canvas state to Empty
-      setCanvasState({
-        mode: CanvasMode.Empty,
+      UpdateCurrentCanvasState({
+        actionType : ActionMode .Empty,
       })
     }
 
@@ -242,9 +278,9 @@ const handlePointerUp = useMutation(
     history.resume()
   },
   [
-    setCanvasState, // Function to update canvas state
+    UpdateCurrentCanvasState, // Function to update canvas state
     camera, // Current camera position
-    canvasState, // Current canvas state
+    CurrentcanvasState, // Current canvas state
     history, // History object to track changes
     AddlayerOnCanvas, // Function to add layers to the canvas
     clearSelection, // Function to clear any selected layers
@@ -279,7 +315,7 @@ const CurrentSelectedLayers = useOthersMapped((user) => user.presence.CurrentlyS
 
   const handleLayerPointerDown = useMutation(
     ({ self, setMyPresence }, e: React.PointerEvent, layerId: string) => {
-      if (canvasState.mode === CanvasMode.Freehand || canvasState.mode === CanvasMode.Inserting) {
+      if (CurrentcanvasState.actionType  === ActionMode .Freehand || CurrentcanvasState.actionType  === ActionMode .Inserting) {
         return;
       }
 
@@ -292,9 +328,9 @@ const CurrentSelectedLayers = useOthersMapped((user) => user.presence.CurrentlyS
         setMyPresence({ CurrentlySelectedLayer: [layerId] }, { addToHistory: true });
       }
 
-      setCanvasState({ mode: CanvasMode.Transforming, current: point });
+      UpdateCurrentCanvasState({ actionType : ActionMode .Transforming, current: point });
     },
-    [canvasState, camera, history,canvasState.mode]
+    [CurrentcanvasState, camera, history,CurrentcanvasState.actionType ]
   );
   const deleteCurrent = deletelayerhook();
 
@@ -347,8 +383,8 @@ return(
   <CanvasInfo boardId={boardId} />
   <CurrentActiveParticipants />
   <CanvasToolbar
-    canvasState={canvasState}
-    setCanvasState={setCanvasState}
+    canvasState={CurrentcanvasState}
+    setCanvasState={UpdateCurrentCanvasState}
     RedoAction={canRedo}
     UndoAction={canUndo}
     undo={history.undo}
@@ -365,7 +401,7 @@ return(
   >
     <g style={{ transform: `translate(${camera.x}px, ${camera.y}px)` }}>
     {/* Mapping over each layerId in LayerIds array to render a DifferentLayerRenderInformation component for each layer.*/}
-      {LayerIds.map(layerId => (
+      {CurrentLayerIds.map(layerId => (
 
         <DifferentLayerRenderInformation
           key={layerId}

@@ -53,38 +53,76 @@ export function colors (color: Color) {
     .padStart(2, '0')}${color.b.toString(16).padStart(2, '0')}`
 }
 
-export const resizeBoundary = (
-  boundary: ResizeCoordinate,
-  corner: RectEdge,
+/**
+ * This function calculates the new boundary (position and size) of a resizable element
+ * based on the current position, the edge being resized, and the mouse pointer location.
+ * It adjusts the boundary dynamically as the user drags the resize edge.
+ */
+export const calculateResizedBoundary = (
+  CurrentPositionAndSize: ResizeCoordinate,
+  edge: RectEdge, 
   point: Point
 ): ResizeCoordinate => {
+  // Initializing the current result with the current position and size of the element
   const result = {
-    x: boundary.x,
-    y: boundary.y,
-    width: boundary.width,
-    height: boundary.height,
+    x: CurrentPositionAndSize.x,
+    y: CurrentPositionAndSize.y,
+    width: CurrentPositionAndSize.width,
+    height: CurrentPositionAndSize.height,
   }
 
-  if ((corner & RectEdge.Left) === RectEdge.Left) {
-    result.x = Math.min(point.x, boundary.x + boundary.width)
-    result.width = Math.abs(boundary.x + boundary.width - point.x)
+  // Adjusting the boundary based on the left edge
+  if ((edge & RectEdge.Left) === RectEdge.Left) {
+    adjustBoundaryForResize(result, point, CurrentPositionAndSize, 'Left')
   }
 
-  if ((corner & RectEdge.Right) === RectEdge.Right) {
-    result.x = Math.min(point.x, boundary.x)
-    result.width = Math.abs(point.x - boundary.x)
+  // Adjusting the boundary based on the right edge 
+  if ((edge & RectEdge.Right) === RectEdge.Right) {
+    adjustBoundaryForResize(result, point, CurrentPositionAndSize, 'Right')
   }
 
-  if ((corner & RectEdge.Top) === RectEdge.Top) {
-    result.y = Math.min(point.y, boundary.y + boundary.height)
-    result.height = Math.abs(boundary.y + boundary.height - point.y)
+  // Adjusting the boundary based on the top edge 
+  if ((edge & RectEdge.Top) === RectEdge.Top) {
+    adjustBoundaryForResize(result, point, CurrentPositionAndSize, 'Top')
   }
 
-  if ((corner & RectEdge.Bottom) === RectEdge.Bottom) {
-    result.y = Math.min(point.y, boundary.y)
-    result.height = Math.abs(point.y - boundary.y)
+  // Adjusting the boundary based on the bottom edge 
+  if ((edge & RectEdge.Bottom) === RectEdge.Bottom) {
+    adjustBoundaryForResize(result, point, CurrentPositionAndSize, 'Bottom')
   }
 
+  // Returning the calculated updated boundary of the element
   return result
 }
 
+/**
+ * This helper function adjusts the boundary for the specific edge being resized (left, right, top, or bottom).
+ * It recalculates the position and size based on the mouse pointer location.
+  */
+const adjustBoundaryForResize = (
+  result: ResizeCoordinate,
+  point: Point,
+  CurrentPositionAndSize: ResizeCoordinate,
+  edge: string 
+) => {
+  // If the left edge is being resized
+  if (edge === 'Left') {
+    result.x = Math.min(point.x, CurrentPositionAndSize.x + CurrentPositionAndSize.width) // Updating the x position
+    result.width = Math.abs(CurrentPositionAndSize.x + CurrentPositionAndSize.width - point.x) // Updating the width
+  } 
+  // If the right edge is being resized
+  else if (edge === 'Right') {
+    result.x = Math.min(point.x, CurrentPositionAndSize.x) // Updating the x position
+    result.width = Math.abs(point.x - CurrentPositionAndSize.x) // Updating the width
+  } 
+  // If the top edge is being resized
+  else if (edge === 'Top') {
+    result.y = Math.min(point.y, CurrentPositionAndSize.y + CurrentPositionAndSize.height) // Updating the y position
+    result.height = Math.abs(CurrentPositionAndSize.y + CurrentPositionAndSize.height - point.y) // Updating the height
+  } 
+  // If the bottom edge is being resized
+  else if (edge === 'Bottom') {
+    result.y = Math.min(point.y, CurrentPositionAndSize.y) // Updating the y position
+    result.height = Math.abs(point.y - CurrentPositionAndSize.y) // Updating the height
+  }
+}

@@ -7,7 +7,7 @@ import { ElementoviewProps } from '@/components/Global Display/Element-View'
 import { Button } from '@/components/ui/button'
 import { Camera, Color } from '@/types/canvasRawTypes'
 import { useMutation, useSelf } from '@/liveblocks.config'
-import { selectlayer } from '@/Custom-hooks/select-layers'
+import { useSelectedLayersBoundingBox } from '@/Custom-hooks/useSelectedLayersBoundingBox'
 import { ColorPicker } from './ColorPicker'
 import { deletelayerhook } from '@/Custom-hooks/Delete-Layer-hook'
 
@@ -33,7 +33,7 @@ export const SelectionTools = memo(
       [selection, setLastUsedColor]
     )
 
-    const selectionBounds = selectlayer()
+    const selectionBounds = useSelectedLayersBoundingBox()
     const deletelayer = deletelayerhook()
 
     if (!selectionBounds) return null

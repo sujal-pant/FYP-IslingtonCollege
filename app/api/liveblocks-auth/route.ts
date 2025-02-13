@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   const { room } = await request.json();
 
   // Query board details from Convex
-  const boardDetails = await convexClient.query(api.boardController.get, { id: room });
+  const boardDetails = await convexClient.query(api.boardController.getBoards, { id: room });
 
   // Checking if the user belongs to the same organization as the board
   if (boardDetails?.orgId !== authInfo.orgId) {

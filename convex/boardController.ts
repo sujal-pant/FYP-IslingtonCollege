@@ -26,7 +26,7 @@ const placeholderImages = [
 ];
 
 // Mutation to create a new board
-export const create = mutation({
+export const createnewboard = mutation({
   args: {
     orgId: v.string(), 
     title: v.string(), 
@@ -55,7 +55,7 @@ export const create = mutation({
 });
 
 // Mutation to update the title of an existing board
-export const update = mutation({
+export const updateboard = mutation({
   args: {
     id: v.id('boards'), 
     title: v.string(),
@@ -84,7 +84,7 @@ export const update = mutation({
 });
 
 // Mutation to mark a board as a favorite
-export const favorite = mutation({
+export const markfavoriteBoard = mutation({
   args: {
     id: v.id('boards'), 
     orgId: v.string(),
@@ -127,7 +127,7 @@ export const favorite = mutation({
 });
 
 // Mutation to remove a board from favorites
-export const unfavorite = mutation({
+export const markUnfavoriteBoard = mutation({
   args: {
     id: v.id('boards'), 
   },
@@ -164,7 +164,7 @@ export const unfavorite = mutation({
 });
 
 // Mutation to remove a board completely (including unfavorites )
-export const remove = mutation({
+export const removeBoard = mutation({
   args: {
     id: v.id('boards'), 
   },
@@ -194,7 +194,7 @@ export const remove = mutation({
 });
 
 // Query to retrieve a specific board by its ID
-export const get = query({
+export const getBoards = query({
   args: {
     id: v.id('boards'), 
   },

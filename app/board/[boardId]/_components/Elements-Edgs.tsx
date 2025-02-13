@@ -1,207 +1,89 @@
-'use client';
+"use client";
 
-import { memo } from 'react';
+import { memo } from "react";
+import { RectEdge, ResizeCoordinate } from "@/types/canvasRawTypes";
+import { useSelf, useStorage } from "@/liveblocks.config";
+import { useSelectedLayersBoundingBox } from "@/Custom-hooks/useSelectedLayersBoundingBox";
 
-import { LayerType, RectEdge, ResizeCoordinate } from '@/types/canvasRawTypes';
-import { useSelf, useStorage } from '@/liveblocks.config';
-import { selectlayer } from '@/Custom-hooks/select-layers';
-
-interface elementedgsProps {
-  onResizeHandlePointerDown: (corner: RectEdge, initialBounds: ResizeCoordinate) => void;
+interface ElementEdgesProps {
+  onResizeHandlePointerDown: (
+    corner: RectEdge,
+    initialBounds: ResizeCoordinate
+  ) => void;
 }
 
-const HANDLE_WIDTH = 8;
+const RESIZE_HANDLE_SIZE = 8; // Constant for the size of the resize handles.
 
-export const Elementedgs = memo(({ onResizeHandlePointerDown }: elementedgsProps) => {
-  const soleLayerId = useSelf((me) =>
-    me.presence.CurrentlySelectedLayer.length === 1 ? me.presence.CurrentlySelectedLayer[0] : null
-  );
+const HANDLE_POSITIONS = [
+  // Defining the positions and cursor styles for resizing at the corners and edges of the selected element.
+  { edge: RectEdge.Top + RectEdge.Left, cursor: "nwse-resize", x: 0, y: 0 },
+  { edge: RectEdge.Top, cursor: "ns-resize", x: 0.5, y: 0 },
+  { edge: RectEdge.Top + RectEdge.Right, cursor: "nesw-resize", x: 1, y: 0 },
+  { edge: RectEdge.Right, cursor: "ew-resize", x: 1, y: 0.5 },
+  { edge: RectEdge.Bottom + RectEdge.Right, cursor: "nwse-resize", x: 1, y: 1 },
+  { edge: RectEdge.Bottom, cursor: "ns-resize", x: 0.5, y: 1 },
+  { edge: RectEdge.Bottom + RectEdge.Left, cursor: "nesw-resize", x: 0, y: 1 },
+  { edge: RectEdge.Left, cursor: "ew-resize", x: 0, y: 0.5 },
+];
 
-  const isShowingHandles = useStorage(
-    (root) =>
-      soleLayerId && root.layers.get(soleLayerId)?.type !== LayerType.Path
-  );
+export const Elementedgs = memo(
+  ({ onResizeHandlePointerDown }: ElementEdgesProps) => {
+    // Fetching the selected layer ID from the liveblocks.
+    const selectedLayerId = useSelf((me) =>
+      me.presence.CurrentlySelectedLayer.length === 1
+        ? me.presence.CurrentlySelectedLayer[0]
+        : null
+    );
 
-  const bounds = selectlayer();
+    // Checking if the handles should be visible based on the selected layer.
+    const shouldShowHandles = useStorage(
+      (root) => selectedLayerId && root.layers.get(selectedLayerId)
+    );
 
-  if (!bounds) return null;
+    // Getting the bounding box of the selected layers.
+    const selectedLayerBounds = useSelectedLayersBoundingBox();
 
-  return (
-    <>
-      {/* Selection Rectangle */}
-      <rect
-        className="fill-transparent stroke-blue-500 stroke-1 pointer-events-none"
-        style={{
-          transform: `translate(${bounds.x}px, ${bounds.y}px)`,
-        }}
-        x={0}
-        y={0}
-        width={bounds.width}
-        height={bounds.height}
-      />
+    // If there's no bounding box
+    if (!selectedLayerBounds) return null;
 
-      {/* Handles for resizing */}
-      {isShowingHandles && (
-        <>
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'nwse-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x - HANDLE_WIDTH / 2}px,
-                  ${bounds.y - HANDLE_WIDTH / 2}px
-                )
-              `,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Top + RectEdge.Left, bounds);
-            }}
-          />
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'ns-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x + bounds.width / 2 - HANDLE_WIDTH / 2}px, 
-                  ${bounds.y - HANDLE_WIDTH / 2}px
-                )
-              `,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Top, bounds);
-            }}
-          />
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'nesw-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x - HANDLE_WIDTH / 2 + bounds.width}px,
-                  ${bounds.y - HANDLE_WIDTH / 2}px
-                )`,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Top + RectEdge.Right, bounds);
-            }}
-          />
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'ew-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x - HANDLE_WIDTH / 2 + bounds.width}px, 
-                  ${bounds.y + bounds.height / 2 - HANDLE_WIDTH / 2}px
-                )`,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Right, bounds);
-            }}
-          />
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'nwse-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x - HANDLE_WIDTH / 2 + bounds.width}px, 
-                  ${bounds.y - HANDLE_WIDTH / 2 + bounds.height}px
-                )`,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Bottom + RectEdge.Right, bounds);
-            }}
-          />
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'ns-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x + bounds.width / 2 - HANDLE_WIDTH / 2}px,
-                  ${bounds.y - HANDLE_WIDTH / 2 + bounds.height}px
-                )
-              `,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Bottom, bounds);
-            }}
-          />
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'nesw-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x - HANDLE_WIDTH / 2}px,
-                  ${bounds.y - HANDLE_WIDTH / 2 + bounds.height}px
-                )`,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Bottom + RectEdge.Left, bounds);
-            }}
-          />
-          <rect
-            className="fill-white stroke-1 stroke-blue-500"
-            x={0}
-            y={0}
-            style={{
-              cursor: 'ew-resize',
-              width: `${HANDLE_WIDTH}px`,
-              height: `${HANDLE_WIDTH}px`,
-              transform: `
-                translate(
-                  ${bounds.x - HANDLE_WIDTH / 2}px,
-                  ${bounds.y - HANDLE_WIDTH / 2 + bounds.height / 2}px
-                )`,
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onResizeHandlePointerDown(RectEdge.Left, bounds);
-            }}
-          />
-        </>
-      )}
-    </>
-  );
-});
+    return (
+      <>
+        {/* Rendering a transparent rectangle representing the selection area */}
+        <rect
+          className="fill-transparent stroke-blue-500 stroke-1 pointer-events-none"
+          style={{
+            transform: `translate(${selectedLayerBounds.x}px, ${selectedLayerBounds.y}px)`,
+          }} // Positioning the selection box.
+          x={0}
+          y={0}
+          width={selectedLayerBounds.width}
+          height={selectedLayerBounds.height}
+        />
 
-Elementedgs.displayName = 'SelectionBox';
+        {/* Rendering resize handles */}
+        {shouldShowHandles &&
+          HANDLE_POSITIONS.map(({ edge, cursor, x, y }) => (
+            <rect
+              key={edge}
+              className="fill-white stroke-1 stroke-blue-500"
+              style={{
+                cursor, // Useing the appropriate cursor for resizing.
+                width: RESIZE_HANDLE_SIZE, // Size of the handle.
+                height: RESIZE_HANDLE_SIZE,
+                transform: `translate(
+              ${selectedLayerBounds.x + x * selectedLayerBounds.width - RESIZE_HANDLE_SIZE / 2}px,
+              ${selectedLayerBounds.y + y * selectedLayerBounds.height - RESIZE_HANDLE_SIZE / 2}px
+            )`, // Positioning the handle at the correct spot relative to the bounding box.
+              }}
+              onPointerDown={(e) => {
+                e.stopPropagation(); // Prevent other events from firing.
+                onResizeHandlePointerDown(edge, selectedLayerBounds); // Calling the passed function to handle the resizing logic.
+              }}
+            />
+          ))}
+      </>
+    );
+  }
+);
+
+Elementedgs.displayName = "SelectionBox";

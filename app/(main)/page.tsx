@@ -2,7 +2,7 @@
 
 import { useOrganization } from "@clerk/nextjs";
 
-import { EmptyOrg } from "./_mainComponents/Sidebar-Component/Empty-Organization";
+import { EmptyOrg } from "./_mainComponents/Sidebar-Component/Landing-New-Organization";
 import { MainBoardView } from "./_mainComponents/Main-Board-Component/Main-Board-View";
 
 interface DashboardPageProps {
