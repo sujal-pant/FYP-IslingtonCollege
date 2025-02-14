@@ -1,6 +1,6 @@
 import { createClient,LiveList,LiveMap,LiveObject } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
-import {Layer,Color} from"@/types/canvasRawTypes"
+import {Layer,ShapeColor} from"@/types/canvasRawTypes"
 // Initialize the Liveblocks client with your public API key
 const client = createClient({
   throttle: 16,

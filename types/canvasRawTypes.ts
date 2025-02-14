@@ -15,7 +15,7 @@
  * - `Camera`: Stores the position of the camera view on the canvas.
  */
 
-export type Color = {
+export type ShapeColor = {
     r: number 
     g: number 
     b: number 
@@ -33,7 +33,7 @@ export type RectangleBoxLayer = {
     y: number // Y-coordinate of the rectangle
     height: number // Height of the rectangle
     width: number // Width of the rectangle
-    fill: Color // Fill color of the rectangle   
+    backgroundColor : ShapeColor // Fill color of the rectangle   
 }
 export type EllipseLayer = {
     type: LayerType.Ellipse
@@ -41,7 +41,7 @@ export type EllipseLayer = {
     y: number // Y-coordinate of the ellipse
     height: number // Height of the ellipse
     width: number // Width of the ellipse
-    fill: Color // Fill color of the ellipse
+    backgroundColor : ShapeColor // Fill color of the ellipse
 }
 export type TextBoxLayer = {
     type: LayerType.TextBox
@@ -49,7 +49,7 @@ export type TextBoxLayer = {
     y: number // Y-coordinate of the text box
     height: number // Height of the text box
     width: number // Width of the text box
-    fill: Color // Fill color of the text box
+    backgroundColor : ShapeColor // Fill color of the text box
     value?: string //  text content inside the text box
 }
 export type StickyNoteLayer = {
@@ -58,7 +58,7 @@ export type StickyNoteLayer = {
     y: number // Y-coordinate of the sticky note
     height: number // Height of the sticky note
     width: number // Width of the sticky note
-    fill: Color // Fill color of the sticky note
+    backgroundColor : ShapeColor // Fill color of the sticky note
     value?: string //  text content inside the sticky note
 }
 

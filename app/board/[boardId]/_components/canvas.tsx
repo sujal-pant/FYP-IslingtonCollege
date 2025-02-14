@@ -16,7 +16,7 @@ import {
   Camera,
   ActionMode ,
   CanvasInteractionState,
-  Color,
+  ShapeColor,
   LayerType,
   Point,
   RectEdge,
@@ -49,7 +49,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
   });
 
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
-  const [LastUsedColor, setLastUsedColor] = useState<Color>({
+  const [LastUsedColor, setLastUsedColor] = useState<ShapeColor>({
     r: 0,
     g: 0,
     b: 0,
@@ -82,7 +82,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         y: positionOnScreen.y,
         height: 100,
         width: 100,
-        fill: LastUsedColor,
+        backgroundColor : LastUsedColor,
       });
 
       infoAllLayerIds.push(newlayerId);

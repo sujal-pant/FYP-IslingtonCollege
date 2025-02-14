@@ -18,7 +18,7 @@ export const Rectangle = ({
   onPointerDown,
   SelectionColorBasedOnConnId,
 }: RectangleProps) => {
-  const { x, y, width, height, fill } = layer
+  const { x, y, width, height, backgroundColor  } = layer
 
   return (
     <rect
@@ -43,7 +43,7 @@ export const Rectangle = ({
       strokeWidth={1}
       
       // Setting the fill color of the rectangle. If 'fill' is provided, using it otherwise using default to black.
-      fill={fill ? colors(fill) : "#000"}
+      fill={backgroundColor ? colors(backgroundColor) : "#000"}
       
       // Set the stroke color (border). If a connection ID-based color is provided, using that otherwise making it transparent.
       stroke={SelectionColorBasedOnConnId || 'transparent'}
