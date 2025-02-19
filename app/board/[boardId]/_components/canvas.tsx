@@ -33,7 +33,7 @@ import { Elementedgs } from './Elements-Edgs';
 import { usercolor, getCanvasCoordinatesFromPointer , calculateResizedBoundary } from '@/utils/utils';
 import { LiveObject } from '@liveblocks/client';
 import { SelectionTools } from './Canvas-Additional-Tools'; 
-import { deletelayerhook } from '@/Custom-hooks/Delete-Layer-hook';
+import { deletelayerhook } from '@/Custom-hooks/Canvas-Hooks/Delete-Layer-hook';
 
 const MAX_NUM_LAYER = 100;
 
