@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge'
 
 import {
   Camera,
-  Color,
+  ShapeColor,
   Layer,
   LayerType,
   
@@ -46,7 +46,7 @@ export const getCanvasCoordinatesFromPointer  = (
   }
 }
 
-export function colors (color: Color) {
+export function colors (color: ShapeColor) {
 
   return `#${color.r.toString(16).padStart(2, '0')}${color.g
     .toString(16)
@@ -126,3 +126,27 @@ const adjustBoundaryForResize = (
     result.height = Math.abs(point.y - CurrentPositionAndSize.y) // Updating the height
   }
 }
+export const selectLayersWithinRect = (
+  layerIds: readonly string[],
+  layers: ReadonlyMap<string, Layer>,
+  a: Point,
+  b: Point
+): string[] => {
+  // Calculating the bounds of the selection rectangle.
+  const x1 = Math.min(a.x, b.x);
+  const y1 = Math.min(a.y, b.y);
+  const x2 = Math.max(a.x, b.x);
+  const y2 = Math.max(a.y, b.y);
+
+  return layerIds.filter((id) => {
+    const layer = layers.get(id);
+    if (!layer) return false;
+
+    const { x, y, width, height } = layer;
+    const layerRight = x + width;
+    const layerBottom = y + height;
+
+    // Checking for intersection:
+    return x2 > x && x1 < layerRight && y2 > y && y1 < layerBottom;
+  });
+};

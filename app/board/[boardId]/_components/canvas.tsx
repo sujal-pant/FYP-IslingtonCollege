@@ -30,7 +30,7 @@ import { CurrentActivePointers } from './CurrentActivePointersMap';
 import { DifferentLayerRenderInformation } from './Different-Layer-Render-formation';
 import { Elementedgs } from './Elements-Edgs';
 
-import { usercolor, getCanvasCoordinatesFromPointer , calculateResizedBoundary } from '@/utils/utils';
+import { usercolor, getCanvasCoordinatesFromPointer , calculateResizedBoundary, selectLayersWithinRect } from '@/utils/utils';
 import { LiveObject } from '@liveblocks/client';
 import { SelectionTools } from './Canvas-Additional-Tools'; 
 import { deletelayerhook } from '@/Custom-hooks/Canvas-Hooks/Delete-Layer-hook';
@@ -196,6 +196,48 @@ const handleResizeStart = useCallback(
   },
   [history] 
 )
+// This code initiates the selection process when the pointer's movement exceeds a minimal threshold.
+const handleSelectionStart  = useCallback((current: Point, origin: Point) => {
+  // Defining the minimal movement required to consider it a valid selection drag.
+  const MOVEMENT_THRESHOLD = 5;
+  
+  // Checking if the combined movement in x and y directions exceeds the threshold.
+  if (Math.abs(current.x - origin.x) + Math.abs(current.y - origin.y) > MOVEMENT_THRESHOLD) {
+    // Updating the canvas state to start drawing the selection net.
+    UpdateCurrentCanvasState({
+      actionType: ActionMode.SelectionNet,
+      origin,
+      current,
+    });
+  }
+}, []);
+
+// Updating the selection net as the user drags and sets the currently selected layers.
+const handleSelectionUpdate = useMutation(
+  ({ storage, setMyPresence }, current: Point, origin: Point) => {
+    // Retrieving the current layers from storage and converting them to an immutable structure.
+    const Currentlayers = storage.get('layers').toImmutable();
+    
+    // Updating the canvas state with the new selection net coordinates.
+    UpdateCurrentCanvasState({
+      actionType: ActionMode.SelectionNet,
+      origin,
+      current,
+    });
+
+    // Determining which layers intersect with the current selection rectangle.
+    const selectedLayerIds = selectLayersWithinRect(
+      CurrentLayerIds, 
+      Currentlayers,   
+      origin,          
+      current          
+    );
+
+    // Updating the user's presence with the IDs of the layers that are currently selected.
+    setMyPresence({ CurrentlySelectedLayer: selectedLayerIds });
+  },
+  [CurrentLayerIds]
+);
 
   const handleCameraMove = useCallback((e: React.WheelEvent) => {
     setCamera(camera => ({
@@ -211,8 +253,13 @@ const handleResizeStart = useCallback(
       e.preventDefault();
 
       const current = getCanvasCoordinatesFromPointer (e, camera);
-      
-      if (CurrentcanvasState.actionType  === ActionMode .Transforming) {
+      if (CurrentcanvasState.actionType === ActionMode.Clicking) {
+        handleSelectionStart (current, CurrentcanvasState.origin)
+      }
+      else if (CurrentcanvasState.actionType === ActionMode.SelectionNet) {
+        handleSelectionUpdate (current, CurrentcanvasState.origin)
+      }
+        else if (CurrentcanvasState.actionType  === ActionMode .Transforming) {
         MoveCurrentSelectedlayer(current);
       }
       else if(CurrentcanvasState.actionType  === ActionMode .Resizing) {
@@ -411,6 +458,16 @@ return(
         />
       ))}
       <Elementedgs onResizeHandlePointerDown={handleResizeStart} />
+      {CurrentcanvasState.actionType === ActionMode.SelectionNet &&
+            CurrentcanvasState.current != null && (
+              <rect
+                className="fill-blue-500/5 stroke-blue-400 "
+                x={Math.min(CurrentcanvasState.origin.x, CurrentcanvasState.current.x)}
+                y={Math.min(CurrentcanvasState.origin.y, CurrentcanvasState.current.y)}
+                width={Math.abs(CurrentcanvasState.origin.x - CurrentcanvasState.current.x)}
+                height={Math.abs(CurrentcanvasState.origin.y - CurrentcanvasState.current.y)}
+              />
+            )}
       <CurrentActivePointers />
     </g>
   </svg>
