@@ -5,7 +5,7 @@ import { memo } from 'react'
 import { LayerType } from '@/types/canvasRawTypes'  
 import { useStorage } from '@/liveblocks.config'  
 import { Rectangle } from './Rectangle-Element'  
-
+import { TextElement } from './TextBox-Element'
 interface DifferentLayerInformationProps {
   id: string  // Unique ID for the layer
   onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void  
@@ -23,6 +23,17 @@ export const DifferentLayerRenderInformation = memo(
 
     // Rendering different types of layers based on the layer type
     switch (Currentlayer.type) {
+
+      case LayerType.TextBox:  //  TextBoxLayer
+        return (
+            // Rendering the TextBox component 
+          <TextElement
+            id={id}
+            layer={Currentlayer}
+            onPointerDown={onLayerPointerDown}
+            SelectionColorBasedOnConnId={layerColorWithConnId}
+          />
+        )
       case LayerType.RectangleBox:  //  RectangleBox Layer
         return (
           // Rendering the Rectangle component 
