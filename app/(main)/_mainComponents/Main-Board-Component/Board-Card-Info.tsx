@@ -1,5 +1,6 @@
-import { Star } from 'lucide-react' // Importing the Star icon from the lucide-react library
+import { Heart } from 'lucide-react' // Importing the Heart icon from the lucide-react library
 import { cn } from '@/utils/utils' // Importing the utility function `cn` (likely used for conditionally applying class names)
+import { useState } from 'react'
 
 interface BoardCardInfoProps { // Defining the interface for the props the component will receive
   title: string // Title of the board card
@@ -18,6 +19,8 @@ export const BoardCardInfo = ({
   onClick,
   disabled,
 }: BoardCardInfoProps) => {
+  const [showTooltip, setShowTooltip] = useState(false)
+
   
   // Event handler for the button click, preventing propagation and calling the onClick function passed from the parent
   const handleClick = (
@@ -45,14 +48,21 @@ export const BoardCardInfo = ({
         onClick={handleClick} // Handle the button click event
         className={cn(
           // Apply conditional styles for the button, change opacity on hover
-          'opacity-0 group-hover:opacity-100 transition absolute top-3 right-3 text-muted-foreground hover:text-amber',
+          ' group-hover:opacity-100 transition absolute top-3 right-3 text-muted-foreground hover:text-amber',
           disabled && 'cursor-not-allowed opacity-75' // If disabled, change cursor and opacity
         )}
+        onMouseEnter={() => setShowTooltip(true)} // Show tooltip on hover
+        onMouseLeave={() => setShowTooltip(false)} // Hide tooltip on mouse leave
       >
-        {/* Star icon, its color changes if the card is marked as favorite */}
-        <Star
-          className={cn('h-4 w-4', isFavorite && 'fill-blue-600 text-blue-600')}
+        {/* Heart icon, its color changes if the card is marked as favorite */}
+        <Heart
+          className={cn('h-4 w-4', isFavorite && 'fill-red-600 text-red-600')}
         />
+       {showTooltip && (
+  <div className="absolute top-1 right-16 p-2 bg-black text-white text-xs rounded-lg shadow-lg opacity-90 transition-opacity duration-200 ease-in-out">
+    Set as Favorite
+  </div>
+)}
       </button>
     </div>
   )

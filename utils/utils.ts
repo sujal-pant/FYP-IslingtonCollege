@@ -150,3 +150,20 @@ export const selectLayersWithinRect = (
     return x2 > x && x1 < layerRight && y2 > y && y1 < layerBottom;
   });
 };
+
+
+export const getStickyNoteTextColor = (color: ShapeColor): 'black' | 'white' => {
+  if (
+    color.r < 0 || color.r > 255 ||
+    color.g < 0 || color.g > 255 ||
+    color.b < 0 || color.b > 255
+  ) {
+    throw new Error('Invalid RGB color values. Must be in the range [0, 255].');
+  }
+
+  const luminance = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
+
+  
+  return luminance > 182 ? 'black' : 'white';
+};
+
