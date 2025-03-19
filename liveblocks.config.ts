@@ -12,6 +12,8 @@ const client = createClient({
 type Presence = {
  cursor: { x: number; y: number } | null,
  CurrentlySelectedLayer:string[];
+ stroke: [x: number, y: number, size: number][] | null;
+ color: ShapeColor | null;
 };
 
 // Define the Storage type (persistent document shared between users)

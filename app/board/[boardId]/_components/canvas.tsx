@@ -9,7 +9,8 @@ import {
   useCanRedo, 
   useMutation, 
   useStorage, 
-  useOthersMapped 
+  useOthersMapped, 
+  useSelf
 } from '@/liveblocks.config';
 
 import {
@@ -30,10 +31,12 @@ import { CurrentActivePointers } from './CurrentActivePointersMap';
 import { DifferentLayerRenderInformation } from './Different-Layer-Render-formation';
 import { Elementedgs } from './Elements-Edgs';
 
-import { usercolor, getCanvasCoordinatesFromPointer , calculateResizedBoundary, selectLayersWithinRect } from '@/utils/utils';
+import { usercolor, getCanvasCoordinatesFromPointer , calculateResizedBoundary, selectLayersWithinRect, colors } from '@/utils/utils';
 import { LiveObject } from '@liveblocks/client';
 import { SelectionTools } from './Canvas-Additional-Tools'; 
 import { deletelayerhook } from '@/Custom-hooks/Canvas-Hooks/Delete-Layer-hook';
+import { createPathLayerFromStroke } from '@/utils/pentool_utils';
+import { PenTool } from './Pen-Tool-Component';
 
 const MAX_NUM_LAYER = 100;
 
@@ -48,6 +51,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     actionType : ActionMode .Empty,
   });
 
+  const stroke = useSelf((self) => self.presence.stroke);
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
   const [LastUsedColor, setLastUsedColor] = useState<ShapeColor>({
     r: 0,
@@ -141,7 +145,43 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       setMyPresence({ CurrentlySelectedLayer: [] }, { addToHistory: true })
     }
   }, [])
-
+  const FreehandDrawing = useMutation(
+    ({ self, setMyPresence }, point: Point, e: React.PointerEvent) => {
+      const { stroke } = self.presence;
+  
+      if (
+        CurrentcanvasState.actionType !== ActionMode.Freehand ||
+        e.buttons !== 1 ||
+        !stroke
+      ) {
+        return;
+      }
+  
+      const isSamePoint =
+        stroke.length === 1 &&
+        stroke[0][0] === point.x &&
+        stroke[0][1] === point.y;
+  
+      if (!isSamePoint) {
+        setMyPresence({
+          cursor: point,
+          stroke: [...stroke, [point.x, point.y, e.pressure]],
+        });
+      }
+    },
+    [CurrentcanvasState.actionType]
+  );
+  
+  const PentoolStart = useMutation(
+    ({ setMyPresence }, point: Point, size: number) => {
+      setMyPresence({
+        stroke: [[point.x, point.y, size]],
+        color: LastUsedColor,
+      });
+    },
+    [LastUsedColor]
+  );
+  
   /*
     This Function help in resizing the selected layer on the canvas.
      It listens for a resizing event and updates the selected layer's boundary
@@ -177,6 +217,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     },
     [CurrentcanvasState]
   )
+ 
  /**
  * 
  * This function is called when the user begins to resize a layer or object on the canvas,
@@ -211,6 +252,8 @@ const handleSelectionStart  = useCallback((current: Point, origin: Point) => {
     });
   }
 }, []);
+
+
 
 // Updating the selection net as the user drags and sets the currently selected layers.
 const handleSelectionUpdate = useMutation(
@@ -265,10 +308,13 @@ const handleSelectionUpdate = useMutation(
       else if(CurrentcanvasState.actionType  === ActionMode .Resizing) {
         resizeSelctedLayer(current);
       }
+      else if(CurrentcanvasState.actionType  === ActionMode .Freehand) {
+        FreehandDrawing(current,e);
+      }
 
       setMyPresence({ cursor: current });
     },
-    [camera, CurrentcanvasState, resizeSelctedLayer,MoveCurrentSelectedlayer]
+    [camera, CurrentcanvasState, resizeSelctedLayer,MoveCurrentSelectedlayer,FreehandDrawing]
   );
   
   const handlePointerLeave = useMutation(({ setMyPresence }) => {
@@ -282,14 +328,41 @@ const handleSelectionUpdate = useMutation(
       if (CurrentcanvasState.actionType  === ActionMode .Inserting) {
         return
       }
+      
+      if(CurrentcanvasState.actionType  === ActionMode .Freehand) {
+        PentoolStart(point,e.pressure);
+        return;
+      }
 
       
 
       UpdateCurrentCanvasState({ origin: point, actionType : ActionMode .Clicking })
     },
-    [camera, CurrentcanvasState.actionType , UpdateCurrentCanvasState, ]
+    [camera, CurrentcanvasState.actionType , UpdateCurrentCanvasState, PentoolStart]
   )
-
+  const PenContent = useMutation(({ storage, self, setMyPresence }) => {
+    const { stroke } = self.presence;
+    if (!stroke || stroke.length < 2) {
+      setMyPresence({ stroke: null });
+      return;
+    }
+  
+    const liveLayers = storage.get("layers");
+    if (liveLayers.size >= MAX_NUM_LAYER) {
+      setMyPresence({ stroke: null });
+      return;
+    }
+  
+    const id = nanoid();
+    const newLayer = new LiveObject(createPathLayerFromStroke(stroke, LastUsedColor));
+  
+    liveLayers.set(id, newLayer);
+    storage.get("layerIds").push(id);
+  
+    setMyPresence({ stroke: null });
+    UpdateCurrentCanvasState({ actionType: ActionMode.Freehand });
+  }, [LastUsedColor]);
+  
 /*
   The handlePointerUp function is a mutation hook that manages the pointer-up event within the canvas. 
   It updates the canvas state based on the current interaction mode. If the canvas is in Empty or Clicking mode,
@@ -311,7 +384,12 @@ const handlePointerUp = useMutation(
       UpdateCurrentCanvasState({
         actionType : ActionMode .Empty, // Setting the canvas state back to Empty
       })
-    } else if (CurrentcanvasState.actionType  === ActionMode .Inserting) {
+    } 
+  
+  else if (CurrentcanvasState.actionType === ActionMode.Freehand) {
+    PenContent()
+  } 
+  else if (CurrentcanvasState.actionType  === ActionMode .Inserting) {
       // If the current mode is Inserting, adding the a newly created layer to the canvas
       AddlayerOnCanvas(CurrentcanvasState.layerType, point)
     } else {
@@ -324,7 +402,7 @@ const handlePointerUp = useMutation(
     // Resuming history tracking 
     history.resume()
   },
-  [
+  [PenContent,
     UpdateCurrentCanvasState, // Function to update canvas state
     camera, // Current camera position
     CurrentcanvasState, // Current canvas state
@@ -469,6 +547,14 @@ return(
               />
             )}
       <CurrentActivePointers />
+      {stroke != null && stroke.length > 0 && (
+            <PenTool
+              points={stroke}
+              fill={colors(LastUsedColor)}
+              x={0}
+              y={0}
+            />
+          )}
     </g>
   </svg>
 </main>

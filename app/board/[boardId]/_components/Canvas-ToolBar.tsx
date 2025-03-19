@@ -26,12 +26,13 @@ export const CanvasToolbar = ({
       onClick={() => setCanvasState({ actionType: ActionMode.Empty })}
       isActive={[ActionMode.Empty, ActionMode.Transforming, ActionMode.SelectionNet, ActionMode.Clicking, ActionMode.Resizing].includes(canvasState.actionType)}
     />
-    <CanvasSelectedButtons
-      Elementlabel="Pen"
-      Elementicon={PenTool}
-      onClick={() => setCanvasState({ actionType: ActionMode.Freehand })}
-      isActive={canvasState.actionType === ActionMode.Freehand}
-    />
+   <CanvasSelectedButtons
+  Elementlabel="Pen"
+  Elementicon={PenTool}
+  onClick={() => setCanvasState({ actionType: ActionMode.Freehand })}
+  isActive={canvasState.actionType === ActionMode.Freehand}
+/>
+
     <CanvasSelectedButtons
       Elementlabel="Text"
       Elementicon={Type}

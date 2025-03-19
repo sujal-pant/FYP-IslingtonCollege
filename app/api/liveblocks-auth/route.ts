@@ -23,9 +23,14 @@ export async function POST(request: Request) {
 
   // Validating authorization and user
   if (!authInfo || !user) {
-    return new Response('Unauthorized', { status: 403 });
+    return new Response(null, {
+      status: 307,
+      headers: {
+        Location: 'https://assuring-hog-22.accounts.dev/sign-in', 
+      },
+    });
   }
-
+  
   // Parsing request payload to get room details
   const { room } = await request.json();
 

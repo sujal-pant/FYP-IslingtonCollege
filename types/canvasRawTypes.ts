@@ -25,6 +25,7 @@ export enum LayerType {
     Ellipse, // Represents an elliptical shape
     TextBox, // Represents a text box layer
     StickyNote, // Represents a sticky note layer
+    PenTool // Represents a pentool
 }
 
 export type RectangleBoxLayer = {
@@ -35,6 +36,17 @@ export type RectangleBoxLayer = {
     width: number // Width of the rectangle
     backgroundColor : ShapeColor // Fill color of the rectangle   
 }
+export type FreeHandDrawing = {
+    type: LayerType.PenTool;
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+    backgroundColor: ShapeColor;
+    coordinates : number[][];
+    value?: string;
+  };
+  
 export type EllipseLayer = {
     type: LayerType.Ellipse
     x: number // X-coordinate of the ellipse
@@ -127,6 +139,7 @@ export enum ActionMode  {
 export type Layer =
     | RectangleBoxLayer
     | EllipseLayer
+    | FreeHandDrawing
     | TextBoxLayer
     | StickyNoteLayer
 

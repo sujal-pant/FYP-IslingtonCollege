@@ -26,7 +26,9 @@ export const Room = ({ children, roomId, fallback }: RoomProps) => {
       id={roomId} // Assigning the unique room ID for Liveblocks session
       initialPresence={{
         cursor: null, // It Stores the user's cursor position (initially it store null)
-        CurrentlySelectedLayer: [], // Tracks the layers selected by the user
+        CurrentlySelectedLayer: [], // Tracks the layers selected by the 
+        stroke: null, // Stores the drawing stroke data
+        color: null, // Stores the selected color
       }}
       initialStorage={{
         layers: new LiveMap<string, LiveObject<Layer>>(), // Stores all layers using a map with unique IDs

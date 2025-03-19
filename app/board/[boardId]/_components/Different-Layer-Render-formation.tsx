@@ -7,6 +7,8 @@ import { useStorage } from '@/liveblocks.config'
 import { Rectangle } from './Rectangle-Element'  
 import { TextElement } from './TextBox-Element'
 import { StickyNote } from './StickyNote-Element'
+import { PenTool } from './Pen-Tool-Component'
+import { colors } from '@/utils/utils'
 interface DifferentLayerInformationProps {
   id: string  // Unique ID for the layer
   onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void  
@@ -24,8 +26,22 @@ export const DifferentLayerRenderInformation = memo(
 
     // Rendering different types of layers based on the layer type
     switch (Currentlayer.type) {
+      case LayerType.PenTool:
+        return (
+          <PenTool
+            key={id}
+            points={Currentlayer.coordinates}
+            onPointerDown={e => onLayerPointerDown(e, id)}
+            x={Currentlayer.x}
+            y={Currentlayer.y}
+            fill={Currentlayer.backgroundColor ? colors(Currentlayer.backgroundColor) : '#000'}
+            stroke={layerColorWithConnId}
+          />
+        )
+
       case LayerType.StickyNote:  //  StickyNoteLayer
       return (
+        
           // Rendering the StickyNote component 
         <StickyNote
           id={id}
