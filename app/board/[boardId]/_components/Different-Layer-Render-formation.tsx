@@ -9,6 +9,7 @@ import { TextElement } from './TextBox-Element'
 import { StickyNote } from './StickyNote-Element'
 import { PenTool } from './Pen-Tool-Component'
 import { colors } from '@/utils/utils'
+import { EllipseElement } from './Ellipse-Element'
 interface DifferentLayerInformationProps {
   id: string  // Unique ID for the layer
   onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void  
@@ -26,6 +27,17 @@ export const DifferentLayerRenderInformation = memo(
 
     // Rendering different types of layers based on the layer type
     switch (Currentlayer.type) {
+      case LayerType.Ellipse:
+        return (
+          <EllipseElement
+            key={id}
+            id={id}
+            layer={Currentlayer}
+            onPointerDown={e => onLayerPointerDown(e, id)}
+            selectionColor={layerColorWithConnId}
+          />
+        );
+      
       case LayerType.PenTool:
         return (
           <PenTool

@@ -38,7 +38,7 @@ import { deletelayerhook } from '@/Custom-hooks/Canvas-Hooks/Delete-Layer-hook';
 import { createPathLayerFromStroke } from '@/utils/pentool_utils';
 import { PenTool } from './Pen-Tool-Component';
 
-const MAX_NUM_LAYER = 100;
+const MAX_NUM_LAYER = 1000;
 
 interface CanvasProps {
   boardId: string;
@@ -508,13 +508,13 @@ return(
   <CanvasInfo boardId={boardId} />
   <CurrentActiveParticipants />
   <CanvasToolbar
-    canvasState={CurrentcanvasState}
-    setCanvasState={UpdateCurrentCanvasState}
-    RedoAction={canRedo}
-    UndoAction={canUndo}
-    undo={history.undo}
-    redo={history.redo}
-  />
+      canvasState={CurrentcanvasState}
+      setCanvasState={UpdateCurrentCanvasState}
+      RedoAction={canRedo}
+      UndoAction={canUndo}
+      undo={history.undo}
+      redo={history.redo}
+      setLastUsedColor={setLastUsedColor} selectedLayerIds={[]} storage={undefined}  />
   <SelectionTools camera={camera} setLastUsedColor={setLastUsedColor} />
   <svg
     className="h-[100vh] w-[100vw]"
