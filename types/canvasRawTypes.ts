@@ -25,7 +25,9 @@ export enum LayerType {
     Ellipse, // Represents an elliptical shape
     TextBox, // Represents a text box layer
     StickyNote, // Represents a sticky note layer
-    PenTool // Represents a pentool
+    PenTool, // Represents a pentool
+    ArrowHead, // Represents an arrow with a head
+
 }
 
 export type RectangleBoxLayer = {
@@ -46,7 +48,7 @@ export type FreeHandDrawing = {
     coordinates : number[][];
     value?: string;
   };
-  
+
 export type EllipseLayer = {
     type: LayerType.Ellipse
     x: number // X-coordinate of the ellipse
@@ -147,4 +149,5 @@ export type Layer =
     export type Camera = {
       x: number // X-coordinate position of the camera
       y: number // Y-coordinate position of the camera
-  }
+      
+    }

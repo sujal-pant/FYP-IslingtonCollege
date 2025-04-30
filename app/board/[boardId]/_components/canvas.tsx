@@ -37,6 +37,7 @@ import { SelectionTools } from './Canvas-Additional-Tools';
 import { deletelayerhook } from '@/Custom-hooks/Canvas-Hooks/Delete-Layer-hook';
 import { createPathLayerFromStroke } from '@/utils/pentool_utils';
 import { PenTool } from './Pen-Tool-Component';
+import { useDisableScrollBounce } from '@/Custom-hooks/Canvas-Hooks/scrool-hook';
 
 const MAX_NUM_LAYER = 1000;
 
@@ -58,7 +59,13 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     g: 0,
     b: 0,
   });
+  const [colorfix, setcolorfix] = useState<ShapeColor>({
+    r: 0,
+    g: 0,
+    b: 0,
+  });
 
+  useDisableScrollBounce()
   const history = useHistory();
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
@@ -86,7 +93,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         y: positionOnScreen.y,
         height: 100,
         width: 100,
-        backgroundColor : LastUsedColor,
+        backgroundColor : colorfix,
       });
 
       infoAllLayerIds.push(newlayerId);
@@ -95,7 +102,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       setMyPresence({ CurrentlySelectedLayer: [newlayerId] }, { addToHistory: true });
       UpdateCurrentCanvasState({ actionType : ActionMode .Empty });
     },
-    [LastUsedColor]
+    [colorfix]
   );
 
 
@@ -515,6 +522,7 @@ return(
       undo={history.undo}
       redo={history.redo}
       setLastUsedColor={setLastUsedColor} selectedLayerIds={[]} storage={undefined}  />
+      
   <SelectionTools camera={camera} setLastUsedColor={setLastUsedColor} />
   <svg
     className="h-[100vh] w-[100vw]"

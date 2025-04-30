@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'; // ✅ Add this
 
 import { Link2, Pencil, Trash2 } from 'lucide-react'; 
 import { toast } from 'sonner'; 
@@ -14,6 +15,7 @@ import { api } from '@/convex/_generated/api';
 import { customapi } from '@/Custom-hooks/custom-api';
 import { ConfirmModal } from '../../../../components/modals/confirm-model';
 import { modelrename } from '@/components/modals/Model-Rename';
+import { useOrganization, useUser } from '@clerk/nextjs';
 
 interface BoardViewActionProps {
   children: React.ReactNode; 
@@ -30,6 +32,16 @@ export const BoardViewAction = ({
   id,
   title,
 }: BoardViewActionProps) => {
+  const { user } = useUser();
+  const { organization } = useOrganization(); // Get the current active organization
+  const router = useRouter(); 
+
+  const currentOrgId = organization?.id;
+  const currentOrgMembership = user?.organizationMemberships?.find(
+    (membership) => membership.organization.id === currentOrgId
+  );
+  const currentRole = currentOrgMembership?.role;
+
   // Hook to manage renaming modal
   const { onOpen } = modelrename();
   
@@ -46,10 +58,16 @@ export const BoardViewAction = ({
 
   // Function to handle the deletion of the board
   const onDelete = () => {
-    mutate({ id }) // Trigger the delete mutation
-      .then(() => toast.success('Board successfully deleted'))
+    mutate({ id })
+      .then(() => {
+        toast.success('Board successfully deleted');
+        router.push('/'); 
+      })
       .catch(() => toast.error('Failed to delete the board'));
   };
+  
+
+
 
   return (
     <DropdownMenu>
@@ -75,23 +93,24 @@ export const BoardViewAction = ({
           <Pencil className="h-4 w-4 mr-2" /> {/* Rename icon */}
           Rename
         </DropdownMenuItem>
-        
-        {/* Confirmation modal for board deletion */}
-        <ConfirmModal
-          header="Delete board?"
-          description="This action will permanently delete the board and its contents."
-          disabled={pending} // Disable button if pending deletion
-          onConfirm={onDelete} // Trigger delete on confirmation
-        >
-          {/* Delete option in the dropdown */}
-          <Button
-            variant="ghost"
-            className="p-3 cursor-pointer text-sm w-full justify-start font-normal"
+
+        {currentRole === 'org:admin' && (
+          <ConfirmModal
+            header="Delete board?"
+            description="This action will permanently delete the board and its contents."
+            disabled={pending} // Disable button if pending deletion
+            onConfirm={onDelete} // Trigger delete on confirmation
           >
-            <Trash2 className="h-4 w-4 mr-2" /> {/* Trash icon */}
-            Delete
-          </Button>
-        </ConfirmModal>
+            {/* Delete option in the dropdown */}
+            <Button
+              variant="ghost"
+              className="p-3 cursor-pointer text-sm w-full justify-start font-normal"
+            >
+              <Trash2 className="h-4 w-4 mr-2" /> {/* Trash icon */}
+              Delete
+            </Button>
+          </ConfirmModal>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

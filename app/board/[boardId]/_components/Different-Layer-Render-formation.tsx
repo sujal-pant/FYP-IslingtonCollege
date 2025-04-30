@@ -37,6 +37,8 @@ export const DifferentLayerRenderInformation = memo(
             selectionColor={layerColorWithConnId}
           />
         );
+
+      
       
       case LayerType.PenTool:
         return (

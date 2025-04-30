@@ -11,6 +11,7 @@ import {
   Undo,
   Redo,
   ChevronDown,
+  ArrowRight, // imported arrow icon from lucide-react
 } from 'lucide-react';
 import { ActionMode, CanvasInteractionState, LayerType, ShapeColor } from '@/types/canvasRawTypes';
 import { ShadeSelector } from './ShadeSelector';
@@ -157,6 +158,7 @@ export const CanvasToolbar = ({
           canvasState.layerType === LayerType.Ellipse
         }
       />
+
       <div className="flex items-center gap-4">
         <CanvasSelectedButtons Elementlabel="Undo" Elementicon={Undo} onClick={undo} isDisabled={!UndoAction} />
         <CanvasSelectedButtons Elementlabel="Redo" Elementicon={Redo} onClick={redo} isDisabled={!RedoAction} />

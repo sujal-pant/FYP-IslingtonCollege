@@ -32,36 +32,9 @@ export const CanvasInfo = ({ boardId }: InfoProps) => {
     id: boardId as Id<'boards'>,
   });
 
-
-  const [isFavorite, setIsFavorite] = useState(false);  
-
-  useEffect(() => {
-    if (boarddata) {
-      setIsFavorite(boarddata.isFavorite ?? false)
-    }
-  }, [boarddata?.isFavorite])  
-  const markFavorite = useMutation(api.boardController.markfavoriteBoard)
-  const unmarkFavorite = useMutation(api.boardController.markUnfavoriteBoard)
-
   if (!boarddata) return <InfoSkeleton />
 
-  const handleFavoriteToggle = async () => {
-    try {
-      if (isFavorite) {
-        setIsFavorite(false)  
-        await unmarkFavorite({ id: boardId as Id<'boards'> }) 
-        toast.success("Removed from favorites")
-      } else {
-        setIsFavorite(true) 
-        await markFavorite({ id: boardId as Id<'boards'>, orgId: boarddata.orgId })  
-        toast.success("Added to favorites")
-      }
-    } catch (error) {
-      console.error("Error toggling favorite status:", error)
-      setIsFavorite(!isFavorite); 
-      toast.error("Failed to update favorite status")
-    }
-  }
+
 
   return (
     <div className="absolute top-2 left-2 bg-white rounded-md px-1.5 h-12 flex items-center shadow-md">
@@ -84,16 +57,7 @@ export const CanvasInfo = ({ boardId }: InfoProps) => {
         </Button>
       </ElementoviewProps>
       <TabSeparator />
-      <ElementoviewProps label={isFavorite ? "Remove from favorites" : "Add to favorites"} side="bottom" sideOffset={10}>
-        <Button
-          variant="board"
-          className="text-base font-normal px-2"
-          onClick={handleFavoriteToggle}
-        >
-          {isFavorite ? <Heart className="text-yellow-500" /> : <HeartOff className="text-gray-500" />}
-        </Button>
-      </ElementoviewProps>
-      <TabSeparator />
+   
       <BoardViewAction id={boarddata._id} title={boarddata.title} side="bottom" sideOffset={10}>
         <div>
           <ElementoviewProps label="Main menu" side="bottom" sideOffset={10}>
